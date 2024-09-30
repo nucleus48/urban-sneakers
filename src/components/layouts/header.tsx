@@ -1,4 +1,4 @@
-import { HeartIcon, ShoppingBagIcon, User2Icon } from "lucide-react";
+import { ShoppingBagIcon, User2Icon } from "lucide-react";
 import { Button } from "../ui/button";
 import { Tooltip, TooltipContent } from "../ui/tooltip";
 import { TooltipTrigger } from "@radix-ui/react-tooltip";
@@ -9,27 +9,17 @@ import { SearchBar } from "../search-bar";
 
 export function Header() {
   return (
-    <header>
-      <div className="container flex items-center gap-2 py-4 [&_svg]:size-4 [&_button]:size-6 sm:[&_svg]:size-5 sm:[&_button]:size-10">
-        <NavSheet className="mr-auto" />
-        <div className="hidden sm:flex size-10 border rounded-md items-center justify-center">
+    <header className="bg-wh">
+      <div className="container flex items-center gap-2 py-4 [&_svg]:size-5">
+        <NavSheet className="mr-auto md:hidden" />
+        <div className="flex size-10 border rounded-md items-center justify-center">
           <Logo />
         </div>
-        <div className="font-semibold sm:text-xl mr-auto">{BRAND_NAME}</div>
+        <div className="font-semibold text-lg mr-auto">{BRAND_NAME}</div>
         <SearchBar className="hidden md:block" />
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant={"outline"} size={"icon"}>
-              <HeartIcon />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Wishlist</p>
-          </TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant={"outline"} size={"icon"}>
+            <Button variant={"outline"} size={"icon"} className="hidden md:flex">
               <User2Icon />
             </Button>
           </TooltipTrigger>

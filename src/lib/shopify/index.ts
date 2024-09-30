@@ -1,8 +1,11 @@
+import "server-only";
 import {
   createStorefrontApiClient,
   StorefrontOperations,
 } from "@shopify/storefront-api-client";
 import { ApiClientRequestParams, ReturnData } from "@shopify/graphql-client";
+import { cache } from "react";
+import { ProductsQuery } from "./gql/product";
 
 const client = createStorefrontApiClient({
   apiVersion: process.env.SHOPIFY_API_VERSION!,
@@ -11,18 +14,28 @@ const client = createStorefrontApiClient({
 });
 
 const storefrontFetch = async <
-  TData,
   Operation extends keyof StorefrontOperations = string,
 >(
   ...params: ApiClientRequestParams<Operation, StorefrontOperations>
-): Promise<
-  TData extends undefined ? ReturnData<Operation, StorefrontOperations> : TData
-> => {
+): Promise<ReturnData<Operation, StorefrontOperations>> => {
   try {
     const response = await client.request(...params);
     if (response.data) return response.data;
     throw response;
   } catch (error) {
-    throw { error, ...params };
+    throw { error };
   }
 };
+
+export const getProducts = cache(async (first: number) => {
+  const data = await storefrontFetch(ProductsQuery, { variables: { first } });
+
+  return data.products.edges.map(({ node }) => ({
+    id: node.id,
+    name: node.title,
+    handle: node.handle,
+    imageUrl: node.featuredImage?.url as string,
+    price: node.priceRange.minVariantPrice.amount as number,
+    currencyCode: node.priceRange.minVariantPrice.currencyCode,
+  }));
+});

@@ -1,3 +1,4 @@
+"use client";
 import {
   BringToFrontIcon,
   HomeIcon,
@@ -11,19 +12,21 @@ import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { ROUTE } from "@/lib/constants";
 import Link from "next/link";
 import { SearchBar } from "./search-bar";
-import { cn } from "@/lib/utils";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function NavSheet({ className }: { className?: string }) {
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => setOpen(false), [pathname]);
+
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <Tooltip>
         <TooltipTrigger asChild>
           <SheetTrigger asChild>
-            <Button
-              variant={"outline"}
-              size={"icon"}
-              className={cn(className, "md:hidden")}
-            >
+            <Button variant={"outline"} size={"icon"} className={className}>
               <MenuIcon />
             </Button>
           </SheetTrigger>
@@ -32,7 +35,7 @@ export default function NavSheet({ className }: { className?: string }) {
           <p>Menu</p>
         </TooltipContent>
       </Tooltip>
-      <SheetContent side="left" className="py-10">
+      <SheetContent side="left" className="py-12">
         <SearchBar />
         <nav className="mt-4">
           <ul className="space-y-2">

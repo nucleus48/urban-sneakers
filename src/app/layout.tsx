@@ -27,7 +27,7 @@ export default function RootLayout({
       <body className={`${openSans.variable} antialiased`}>
         <TooltipProvider>
           <Header />
-          <main>{children}</main>
+          <main className="container py-4">{children}</main>
         </TooltipProvider>
       </body>
     </html>
