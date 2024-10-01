@@ -45,3 +45,21 @@ export const ProductQuery = `#graphql
       }
     }
   }`;
+
+export const ProductRecommendationsQuery = `#graphql
+  query ProductRecommendations($productId: ID!) {
+    productRecommendations(productId: $productId) {
+      id
+      title
+      handle
+      featuredImage {
+        url
+      }
+      priceRange {
+        minVariantPrice {
+          currencyCode
+          amount
+        }
+      }
+    }
+  }`

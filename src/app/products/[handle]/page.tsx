@@ -1,4 +1,4 @@
-import { getProduct } from "@/lib/shopify";
+import { getProduct, getProductRecommendations } from "@/lib/shopify";
 import {
   Carousel,
   CarouselMainContainer,
@@ -12,6 +12,8 @@ import { Suspense } from "react";
 import { currencyFormatter } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import ProductCard from "@/components/product-card";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 export default function ProductPage({
   params,
@@ -20,9 +22,14 @@ export default function ProductPage({
 }) {
   return (
     <div>
-      <div className="md:flex space-y-8 gap-8 items-start *:flex-1">
+      <div className="md:flex space-y-8 gap-8 items-start *:flex-1 mb-8">
         <Suspense fallback={<ProductInfoSkeleton />}>
           <ProductInfo handle={params.handle} />
+        </Suspense>
+      </div>
+      <div>
+        <Suspense fallback={<ProductRecommendationsSkeleton />}>
+          <ProductRecommendations handle={params.handle} />
         </Suspense>
       </div>
     </div>
@@ -148,5 +155,58 @@ function ProductInfoSkeleton() {
         </div>
       </div>
     </>
+  );
+}
+
+async function ProductRecommendations({ handle }: { handle: string }) {
+  const product = await getProduct(handle);
+
+  if (!product) notFound();
+
+  const productRecommendations = await getProductRecommendations(product.id);
+
+  if (!productRecommendations) return null;
+
+  return (
+    <section>
+      <h2 className="font-semibold text-xl mb-4">Recommendations</h2>
+      <ScrollArea>
+        <div className="flex w-max gap-4">
+          {productRecommendations.map((product) => (
+            <ProductCard
+              key={product.id}
+              name={product.name}
+              handle={product.handle}
+              imageUrl={product.imageUrl}
+              price={product.price}
+              currencyCode={product.currencyCode}
+            />
+          ))}
+        </div>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
+    </section>
+  );
+}
+
+function ProductRecommendationsSkeleton() {
+  return (
+    <section>
+      <h2 className="font-semibold text-xl mb-4">Recommendations</h2>
+      <div>
+        <ScrollArea>
+          <div className="flex w-max gap-4">
+            {[...new Array(5)].map((_, index) => (
+              <div key={index}>
+                <Skeleton className="w-[300px] h-[300px]" />
+                <Skeleton className="w-2/3 h-4 mx-auto" />
+                <Skeleton className="w-20 h-4 mx-auto" />
+              </div>
+            ))}
+          </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+      </div>
+    </section>
   );
 }

@@ -5,7 +5,11 @@ import {
 } from "@shopify/storefront-api-client";
 import { ApiClientRequestParams, ReturnData } from "@shopify/graphql-client";
 import { cache } from "react";
-import { ProductQuery, ProductsQuery } from "./gql/product";
+import {
+  ProductQuery,
+  ProductRecommendationsQuery,
+  ProductsQuery,
+} from "./gql/product";
 
 const client = createStorefrontApiClient({
   apiVersion: process.env.SHOPIFY_API_VERSION!,
@@ -52,4 +56,22 @@ export const getProduct = cache(async (handle: string) => {
     images: product.images.edges.map(({ node }) => node.url as string),
     options: product.options,
   };
+});
+
+export const getProductRecommendations = cache(async (id: string) => {
+  const { productRecommendations } = await storefrontFetch(
+    ProductRecommendationsQuery,
+    { variables: { productId: id } },
+  );
+
+  if (!productRecommendations) return undefined;
+
+  return productRecommendations.map((product) => ({
+    id: product.id,
+    name: product.title,
+    handle: product.handle,
+    imageUrl: product.featuredImage?.url as string,
+    price: product.priceRange.minVariantPrice.amount as number,
+    currencyCode: product.priceRange.minVariantPrice.currencyCode,
+  }));
 });
