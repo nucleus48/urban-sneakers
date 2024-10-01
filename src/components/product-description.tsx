@@ -106,7 +106,7 @@ export function ProductDescription({
       ))}
       <hr />
       <p className="text-muted-foreground">{description}</p>
-      <Button className="w-full">Add To Cart</Button>
+      <Button className="w-full" disabled={selectedOptions.length !== options.length}>Add To Cart</Button>
     </Form>
   );
 }

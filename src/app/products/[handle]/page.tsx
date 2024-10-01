@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import ProductCard from "@/components/product-card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { ProductDescription } from "./product-description";
+import { ProductDescription } from "@/components/product-description";
 
 type Params = Promise<{ handle: string }>;
 
