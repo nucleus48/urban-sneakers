@@ -43,6 +43,18 @@ export const ProductQuery = `#graphql
           }
         }
       }
+      variants(first: 250) {
+        edges {
+          node {
+            id
+            availableForSale
+            selectedOptions {
+              name
+              value
+            }
+          }
+        }
+      }
     }
   }`;
 

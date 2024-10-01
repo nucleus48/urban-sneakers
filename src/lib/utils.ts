@@ -9,6 +9,7 @@ export function currencyFormatter(value: number, currencyCode: string) {
   const formatter = new Intl.NumberFormat(undefined, {
     style: "currency",
     currency: currencyCode,
+    currencyDisplay: "narrowSymbol",
   });
   return formatter.format(value);
 }

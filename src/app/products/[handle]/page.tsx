@@ -14,29 +14,29 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import ProductCard from "@/components/product-card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { ProductDescription } from "./product-description";
 
-export default function ProductPage({
-  params,
-}: {
-  params: { handle: string };
-}) {
+type Params = Promise<{ handle: string }>;
+
+export default function ProductPage({ params }: { params: Params }) {
   return (
     <div>
       <div className="md:flex space-y-8 gap-8 items-start *:flex-1 mb-8">
         <Suspense fallback={<ProductInfoSkeleton />}>
-          <ProductInfo handle={params.handle} />
+          <ProductInfo params={params} />
         </Suspense>
       </div>
       <div>
         <Suspense fallback={<ProductRecommendationsSkeleton />}>
-          <ProductRecommendations handle={params.handle} />
+          <ProductRecommendations params={params} />
         </Suspense>
       </div>
     </div>
   );
 }
 
-async function ProductInfo({ handle }: { handle: string }) {
+async function ProductInfo({ params }: { params: Params }) {
+  const { handle } = await params;
   const product = await getProduct(handle);
 
   if (!product) notFound();
@@ -79,29 +79,11 @@ async function ProductInfo({ handle }: { handle: string }) {
           <div className="text-xl text-primary">
             {currencyFormatter(product.price, product.currencyCode)}
           </div>
-        </div>
-        {product.options.map(({ name, values }) => (
-          <div key={name} className="space-y-2">
-            <div className="font-medium">{name}</div>
-            <div className="flex gap-4">
-              {values.map((value) => (
-                <Button
-                  key={value}
-                  variant={"secondary"}
-                  size="sm"
-                  className="rounded-full w-max h-8"
-                >
-                  {value}
-                </Button>
-              ))}
-            </div>
-          </div>
-        ))}
-        <hr />
-        <p className="text-muted-foreground">{product.description}</p>
-        <div className="flex flex-col space-y-2">
-          <Button variant={"outline"}>ADD TO CART</Button>
-          <Button>BUY IT NOW</Button>
+          <ProductDescription
+            options={product.options}
+            description={product.description}
+            variants={product.variants}
+          />
         </div>
       </section>
     </>
@@ -149,16 +131,14 @@ function ProductInfoSkeleton() {
           <Skeleton className="w-full h-4" />
           <Skeleton className="w-24 h-4" />
         </div>
-        <div className="flex flex-col space-y-2">
-          <Button variant={"outline"}>ADD TO CART</Button>
-          <Button>BUY IT NOW</Button>
-        </div>
+        <Button className="w-full">Add To Cart</Button>
       </div>
     </>
   );
 }
 
-async function ProductRecommendations({ handle }: { handle: string }) {
+async function ProductRecommendations({ params }: { params: Params }) {
+  const { handle } = await params;
   const product = await getProduct(handle);
 
   if (!product) notFound();
@@ -197,7 +177,7 @@ function ProductRecommendationsSkeleton() {
         <ScrollArea>
           <div className="flex w-max gap-4">
             {[...new Array(5)].map((_, index) => (
-              <div key={index}>
+              <div key={index} className="space-y-2">
                 <Skeleton className="w-[300px] h-[300px]" />
                 <Skeleton className="w-2/3 h-4 mx-auto" />
                 <Skeleton className="w-20 h-4 mx-auto" />
