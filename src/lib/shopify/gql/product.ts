@@ -19,3 +19,29 @@ export const ProductsQuery = `#graphql
       }
     }
   }`;
+
+export const ProductQuery = `#graphql
+  query Product($handle: String) {
+    product(handle: $handle) {
+      id
+      title
+      description
+      options {
+        name
+        values
+      }
+      priceRange {
+        minVariantPrice {
+          currencyCode
+          amount
+        }
+      }
+      images(first: 20) {
+        edges {
+          node {
+            url
+          }
+        }
+      }
+    }
+  }`;

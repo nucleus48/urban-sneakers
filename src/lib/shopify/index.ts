@@ -5,7 +5,7 @@ import {
 } from "@shopify/storefront-api-client";
 import { ApiClientRequestParams, ReturnData } from "@shopify/graphql-client";
 import { cache } from "react";
-import { ProductsQuery } from "./gql/product";
+import { ProductQuery, ProductsQuery } from "./gql/product";
 
 const client = createStorefrontApiClient({
   apiVersion: process.env.SHOPIFY_API_VERSION!,
@@ -18,13 +18,9 @@ const storefrontFetch = async <
 >(
   ...params: ApiClientRequestParams<Operation, StorefrontOperations>
 ): Promise<ReturnData<Operation, StorefrontOperations>> => {
-  try {
-    const response = await client.request(...params);
-    if (response.data) return response.data;
-    throw response;
-  } catch (error) {
-    throw { error };
-  }
+  const response = await client.request(...params);
+  if (response.data) return response.data;
+  throw response;
 };
 
 export const getProducts = cache(async (first: number) => {
@@ -38,4 +34,22 @@ export const getProducts = cache(async (first: number) => {
     price: node.priceRange.minVariantPrice.amount as number,
     currencyCode: node.priceRange.minVariantPrice.currencyCode,
   }));
+});
+
+export const getProduct = cache(async (handle: string) => {
+  const { product } = await storefrontFetch(ProductQuery, {
+    variables: { handle },
+  });
+
+  if (!product) return undefined;
+
+  return {
+    id: product.id,
+    title: product.title,
+    description: product.description,
+    price: product.priceRange.minVariantPrice.amount,
+    currencyCode: product.priceRange.minVariantPrice.currencyCode,
+    images: product.images.edges.map(({ node }) => node.url as string),
+    options: product.options,
+  };
 });
