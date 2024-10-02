@@ -6,3 +6,7 @@ export enum ROUTE {
   PRODUCTS = "/products",
   ORDERS = "/orders",
 }
+
+export enum COOKIE {
+  CART_ID = "cart_id"
+}

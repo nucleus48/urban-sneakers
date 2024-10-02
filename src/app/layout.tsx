@@ -4,6 +4,7 @@ import "./globals.css";
 import { BRAND_NAME } from "@/lib/constants";
 import { Header } from "@/components/layouts/header";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import CartProvider from "@/components/providers/cart-provider";
 
 const openSans = localFont({
   src: "./fonts/OpenSans.ttf",
@@ -26,8 +27,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${openSans.variable} antialiased`}>
         <TooltipProvider>
-          <Header />
-          <main className="container py-4">{children}</main>
+          <CartProvider>
+            <Header />
+            <main className="container py-4">{children}</main>
+          </CartProvider>
         </TooltipProvider>
       </body>
     </html>

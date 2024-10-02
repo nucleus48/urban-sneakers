@@ -1,4 +1,5 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -7,8 +8,8 @@ import {
   ProductVariant,
   SelectedOption,
 } from "@/types/storefront.types";
-import Form from "next/form";
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
+import { useCart } from "./providers/cart-provider";
 
 export function ProductDescription({
   options,
@@ -22,6 +23,7 @@ export function ProductDescription({
   >[];
   options: Pick<ProductOption, "name" | "values">[];
 }) {
+  const { setIsCartOpen } = useCart();
   const [selectedOptions, setSelectedOptions] = useState<
     Pick<SelectedOption, "name" | "value">[]
   >([]);
@@ -68,7 +70,7 @@ export function ProductDescription({
     });
 
   return (
-    <Form className="space-y-4" action={() => {}}>
+    <form className="space-y-4" action={() => setIsCartOpen(true)}>
       {options.map(({ name, values }) => (
         <div key={name} className="space-y-2">
           <div className="font-medium">{name}</div>
@@ -83,7 +85,7 @@ export function ProductDescription({
               );
 
               return (
-                <>
+                <Fragment key={value}>
                   <Checkbox
                     id={value}
                     name={name}
@@ -98,7 +100,7 @@ export function ProductDescription({
                   >
                     {value}
                   </Label>
-                </>
+                </Fragment>
               );
             })}
           </div>
@@ -106,7 +108,12 @@ export function ProductDescription({
       ))}
       <hr />
       <p className="text-muted-foreground">{description}</p>
-      <Button className="w-full" disabled={selectedOptions.length !== options.length}>Add To Cart</Button>
-    </Form>
+      <Button
+        className="w-full"
+        disabled={selectedOptions.length !== options.length}
+      >
+        Add To Cart
+      </Button>
+    </form>
   );
 }

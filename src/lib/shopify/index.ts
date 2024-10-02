@@ -55,7 +55,7 @@ export const getProduct = cache(async (handle: string) => {
     currencyCode: product.priceRange.minVariantPrice.currencyCode,
     images: product.images.edges.map(({ node }) => node.url as string),
     options: product.options,
-    variants: product.variants.edges.map(({node}) => ({...node})),
+    variants: product.variants.edges.map(({ node }) => ({ ...node })),
   };
 });
 
