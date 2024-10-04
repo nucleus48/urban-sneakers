@@ -10,7 +10,12 @@ import {
   ProductRecommendationsQuery,
   ProductsQuery,
 } from "./gql/product";
-import { CartQuery } from "./gql/cart";
+import {
+  CartCreateMutation,
+  CartLinesAddMutation,
+  CartQuery,
+} from "./gql/cart";
+import { CartInput, CartLine, CartLineInput } from "@/types/storefront.types";
 
 const client = createStorefrontApiClient({
   apiVersion: process.env.SHOPIFY_API_VERSION!,
@@ -54,3 +59,17 @@ export const getCart = cache(async (cartId: string) => {
   const { cart } = await storefrontFetch(CartQuery, { variables: { cartId } });
   return cart;
 });
+
+export const createCart = async (cartInput: CartInput) => {
+  const { cartCreate } = await storefrontFetch(CartCreateMutation, {
+    variables: { cartInput },
+  });
+  return cartCreate?.cart?.id;
+};
+
+export const addCartLines = async (cartId: string, lines: CartLineInput[]) => {
+  const { cartLinesAdd } = await storefrontFetch(CartLinesAddMutation, {
+    variables: { cartId, lines },
+  });
+  return cartLinesAdd?.cart?.id;
+};

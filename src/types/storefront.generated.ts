@@ -25,6 +25,21 @@ export type CartQuery = { cart?: StorefrontTypes.Maybe<(
       )> }, cost: { totalAmount: Pick<StorefrontTypes.MoneyV2, 'amount' | 'currencyCode'>, subtotalAmount: Pick<StorefrontTypes.MoneyV2, 'amount' | 'currencyCode'>, totalTaxAmount?: StorefrontTypes.Maybe<Pick<StorefrontTypes.MoneyV2, 'amount' | 'currencyCode'>> } }
   )> };
 
+export type CartCreateMutationVariables = StorefrontTypes.Exact<{
+  cartInput?: StorefrontTypes.InputMaybe<StorefrontTypes.CartInput>;
+}>;
+
+
+export type CartCreateMutation = { cartCreate?: StorefrontTypes.Maybe<{ cart?: StorefrontTypes.Maybe<Pick<StorefrontTypes.Cart, 'id'>> }> };
+
+export type CartLinesAddMutationVariables = StorefrontTypes.Exact<{
+  cartId: StorefrontTypes.Scalars['ID']['input'];
+  lines: Array<StorefrontTypes.CartLineInput> | StorefrontTypes.CartLineInput;
+}>;
+
+
+export type CartLinesAddMutation = { cartLinesAdd?: StorefrontTypes.Maybe<{ cart?: StorefrontTypes.Maybe<Pick<StorefrontTypes.Cart, 'id'>> }> };
+
 export type ProductFragmentFragment = (
   Pick<StorefrontTypes.Product, 'id' | 'title' | 'handle'>
   & { featuredImage?: StorefrontTypes.Maybe<Pick<StorefrontTypes.Image, 'url'>>, priceRange: { minVariantPrice: Pick<StorefrontTypes.MoneyV2, 'amount' | 'currencyCode'> } }
@@ -71,6 +86,8 @@ interface GeneratedQueryTypes {
 }
 
 interface GeneratedMutationTypes {
+  "#graphql\nmutation CartCreate($cartInput: CartInput) {\n  cartCreate(input: $cartInput) {\n    cart {\n      id\n    }\n  }\n}": {return: CartCreateMutation, variables: CartCreateMutationVariables},
+  "#graphql\nmutation CartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {\n  cartLinesAdd(cartId: $cartId, lines: $lines) {\n    cart {\n      id\n    }\n  }\n}": {return: CartLinesAddMutation, variables: CartLinesAddMutationVariables},
 }
 declare module '@shopify/storefront-api-client' {
   type InputMaybe<T> = StorefrontTypes.InputMaybe<T>;

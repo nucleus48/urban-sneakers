@@ -38,3 +38,21 @@ query Cart($cartId: ID!) {
     }
   }
 }`;
+
+export const CartCreateMutation = `#graphql
+mutation CartCreate($cartInput: CartInput) {
+  cartCreate(input: $cartInput) {
+    cart {
+      id
+    }
+  }
+}`;
+
+export const CartLinesAddMutation = `#graphql
+mutation CartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {
+  cartLinesAdd(cartId: $cartId, lines: $lines) {
+    cart {
+      id
+    }
+  }
+}`;
