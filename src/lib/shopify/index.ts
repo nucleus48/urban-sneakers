@@ -29,35 +29,17 @@ const storefrontFetch = async <
 };
 
 export const getProducts = cache(async (first: number) => {
-  const data = await storefrontFetch(ProductsQuery, { variables: { first } });
-
-  return data.products.edges.map(({ node }) => ({
-    id: node.id,
-    name: node.title,
-    handle: node.handle,
-    imageUrl: node.featuredImage?.url as string,
-    price: node.priceRange.minVariantPrice.amount as number,
-    currencyCode: node.priceRange.minVariantPrice.currencyCode,
-  }));
+  const { products } = await storefrontFetch(ProductsQuery, {
+    variables: { first },
+  });
+  return products;
 });
 
 export const getProduct = cache(async (handle: string) => {
   const { product } = await storefrontFetch(ProductQuery, {
     variables: { handle },
   });
-
-  if (!product) return undefined;
-
-  return {
-    id: product.id,
-    title: product.title,
-    description: product.description,
-    price: product.priceRange.minVariantPrice.amount,
-    currencyCode: product.priceRange.minVariantPrice.currencyCode,
-    images: product.images.edges.map(({ node }) => node.url as string),
-    options: product.options,
-    variants: product.variants.edges.map(({ node }) => ({ ...node })),
-  };
+  return product;
 });
 
 export const getProductRecommendations = cache(async (id: string) => {
@@ -65,23 +47,10 @@ export const getProductRecommendations = cache(async (id: string) => {
     ProductRecommendationsQuery,
     { variables: { productId: id } },
   );
-
-  if (!productRecommendations) return undefined;
-
-  return productRecommendations.map((product) => ({
-    id: product.id,
-    name: product.title,
-    handle: product.handle,
-    imageUrl: product.featuredImage?.url as string,
-    price: product.priceRange.minVariantPrice.amount as number,
-    currencyCode: product.priceRange.minVariantPrice.currencyCode,
-  }));
+  return productRecommendations;
 });
 
-export const getCart = cache(async (cartId?: string) => {
-  if (!cartId) return undefined;
-
+export const getCart = cache(async (cartId: string) => {
   const { cart } = await storefrontFetch(CartQuery, { variables: { cartId } });
-
   return cart;
 });

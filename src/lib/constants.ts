@@ -10,3 +10,5 @@ export enum ROUTE {
 export enum COOKIE {
   CART_ID = "cart_id"
 }
+
+export const PRODUCTS_PAGE_LENGTH = 10

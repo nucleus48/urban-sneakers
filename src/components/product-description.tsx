@@ -3,33 +3,26 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import {
-  ProductOption,
-  ProductVariant,
-  SelectedOption,
-} from "@/types/storefront.types";
+import { ProductOption, SelectedOption } from "@/types/storefront.types";
 import { Fragment, useMemo, useState } from "react";
 import { useCart } from "./providers/cart-provider";
+import { ProductQuery } from "@/types/storefront.generated";
 
 export function ProductDescription({
   options,
   variants,
   description,
-}: {
-  description: string;
-  variants: Pick<
-    ProductVariant,
-    "id" | "availableForSale" | "selectedOptions"
-  >[];
-  options: Pick<ProductOption, "name" | "values">[];
-}) {
+}: Pick<
+  NonNullable<ProductQuery["product"]>,
+  "options" | "variants" | "description"
+>) {
   const { setIsCartOpen } = useCart();
   const [selectedOptions, setSelectedOptions] = useState<
     Pick<SelectedOption, "name" | "value">[]
   >([]);
 
   const availableOptions = useMemo(() => {
-    const fileterdVaraints = variants.filter(
+    const fileterdVaraints = variants.nodes.filter(
       (variant) =>
         variant.availableForSale &&
         selectedOptions.every((option) =>

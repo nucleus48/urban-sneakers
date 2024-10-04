@@ -45,14 +45,14 @@ async function ProductInfo({ params }: { params: Params }) {
     <>
       <Carousel orientation="horizontal">
         <CarouselMainContainer>
-          {product.images.map((imageUrl) => (
-            <SliderMainItem key={imageUrl}>
+          {product.images.nodes.map((image) => (
+            <SliderMainItem key={image.id}>
               <Image
                 priority
-                src={imageUrl}
+                src={image.url}
                 alt="carousel item"
-                width={300}
-                height={300}
+                width={image.width || 300}
+                height={image.height || 300}
                 className="w-full brightness-95 rounded-md"
               />
             </SliderMainItem>
@@ -60,13 +60,13 @@ async function ProductInfo({ params }: { params: Params }) {
         </CarouselMainContainer>
 
         <CarouselThumbsContainer>
-          {product.images.map((imageUrl, index) => (
-            <SliderThumbItem index={index} key={imageUrl} className="h-auto">
+          {product.images.nodes.map((image, index) => (
+            <SliderThumbItem index={index} key={image.id} className="h-auto">
               <Image
-                src={imageUrl}
+                src={image.url}
                 alt="carousel item"
-                width={200}
-                height={200}
+                width={image.width || 200}
+                height={image.height || 200}
                 className="w-full brightness-95 rounded-md"
               />
             </SliderThumbItem>
@@ -77,7 +77,10 @@ async function ProductInfo({ params }: { params: Params }) {
         <div className="space-y-2">
           <h1 className="font-semibold text-2xl">{product.title}</h1>
           <div className="text-xl text-primary">
-            {currencyFormatter(product.price, product.currencyCode)}
+            {currencyFormatter(
+              product.priceRange.minVariantPrice.amount,
+              product.priceRange.minVariantPrice.currencyCode,
+            )}
           </div>
           <ProductDescription
             options={product.options}
@@ -153,14 +156,7 @@ async function ProductRecommendations({ params }: { params: Params }) {
       <ScrollArea>
         <div className="flex w-max gap-4">
           {productRecommendations.map((product) => (
-            <ProductCard
-              key={product.id}
-              name={product.name}
-              handle={product.handle}
-              imageUrl={product.imageUrl}
-              price={product.price}
-              currencyCode={product.currencyCode}
-            />
+            <ProductCard key={product.id} {...product} />
           ))}
         </div>
         <ScrollBar orientation="horizontal" />

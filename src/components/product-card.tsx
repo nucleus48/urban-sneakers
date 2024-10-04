@@ -1,36 +1,31 @@
 import { currencyFormatter } from "@/lib/utils";
+import { ProductsQuery } from "@/types/storefront.generated";
 import Image from "next/image";
 import Link from "next/link";
 
-export type ProductCardProps = {
-  handle: string;
-  imageUrl: string;
-  name: string;
-  price: number;
-  currencyCode: string;
-};
-
 export function ProductCard({
+  title,
   handle,
-  imageUrl,
-  name,
-  price,
-  currencyCode,
-}: ProductCardProps) {
+  priceRange,
+  featuredImage,
+}: ProductsQuery["products"]["nodes"][number]) {
   return (
     <div className="text-center space-y-2">
       <Link className="contents" href={`/products/${handle}`}>
         <Image
-          src={imageUrl}
-          alt={`${name} preview`}
+          src={featuredImage?.url}
+          alt={`${title} preview`}
           className="w-full rounded-md brightness-95"
           width={300}
           height={300}
         />
       </Link>
-      <div className="font-semibold text-sm">{name}</div>
+      <div className="font-semibold text-sm">{title}</div>
       <div className="text-primary">
-        {currencyFormatter(price, currencyCode)}
+        {currencyFormatter(
+          priceRange.minVariantPrice.amount,
+          priceRange.minVariantPrice.currencyCode,
+        )}
       </div>
     </div>
   );

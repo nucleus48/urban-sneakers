@@ -11,10 +11,13 @@ export type CartContextValue = {
 
 const CartContext = createContext<CartContextValue | null>(null);
 
-export function CartProvider({ children, cartPromise }: React.PropsWithChildren<{cartPromise: Promise<CartQuery["cart"]>}>) {
-  const cart = use(cartPromise)
+export function CartProvider({
+  children,
+  cartPromise,
+}: React.PropsWithChildren<{ cartPromise: Promise<CartQuery["cart"]> }>) {
+  const cart = use(cartPromise);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [optimisticCart, dispatchOptimisticCart] = useOptimistic(cart)
+  const [optimisticCart, dispatchOptimisticCart] = useOptimistic(cart);
 
   return (
     <CartContext.Provider value={{ isCartOpen, setIsCartOpen, optimisticCart }}>

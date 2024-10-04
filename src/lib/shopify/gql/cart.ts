@@ -4,21 +4,19 @@ query Cart($cartId: ID!) {
     id
     checkoutUrl
     lines(first: 10) {
-      edges {
-        node {
+      nodes {
           id
-          quantity
-          merchandise {
-            ... on ProductVariant {
-              id
-              title
-              price {
-                amount
-                currencyCode
-              }
-              image {
-                url
-              }
+        quantity
+        merchandise {
+          ... on ProductVariant {
+            id
+            title
+            price {
+              amount
+              currencyCode
+            }
+            image {
+              url
             }
           }
         }
@@ -39,4 +37,4 @@ query Cart($cartId: ID!) {
       }
     }
   }
-}`
+}`;

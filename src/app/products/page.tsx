@@ -1,7 +1,13 @@
 import { ProductCard } from "@/components/product-card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PRODUCTS_PAGE_LENGTH } from "@/lib/constants";
 import { getProducts } from "@/lib/shopify";
+import { Metadata } from "next";
 import { Suspense } from "react";
+
+export const metadata: Metadata = {
+  title: "Products",
+};
 
 export default function ProductsPage() {
   return (
@@ -16,22 +22,15 @@ export default function ProductsPage() {
 }
 
 async function ProductList() {
-  const products = await getProducts(10);
+  const products = await getProducts(PRODUCTS_PAGE_LENGTH);
 
-  return products.map((product) => (
-    <ProductCard
-      key={product.id}
-      name={product.name}
-      handle={product.handle}
-      imageUrl={product.imageUrl}
-      price={product.price}
-      currencyCode={product.currencyCode}
-    />
+  return products.nodes.map((product) => (
+    <ProductCard key={product.id} {...product} />
   ));
 }
 
 function ProductListSkeleton() {
-  return [...new Array(10)].map((_, index) => (
+  return [...new Array(PRODUCTS_PAGE_LENGTH)].map((_, index) => (
     <div key={index} className="space-y-2">
       <Skeleton className="w-full aspect-square" />
       <Skeleton className="w-1/2 h-4 mx-auto" />

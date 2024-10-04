@@ -1,77 +1,64 @@
-export const ProductsQuery = `#graphql
-  query Products($first: Int) {
-    products(first: $first) {
-      edges {
-        node {
-          id
-          title
-          handle
-          featuredImage {
-            url
-          }
-          priceRange {
-            minVariantPrice {
-              currencyCode
-              amount
-            }
-          }
-        }
+const ProductFragment = `#graphql
+  fragment ProductFragment on Product {
+    id
+    title
+    handle
+    featuredImage {
+      url
+    }
+    priceRange {
+      minVariantPrice {
+        amount
+        currencyCode
       }
     }
   }`;
 
+export const ProductsQuery = `#graphql
+  query Products($first: Int) {
+    products(first: $first) {
+      nodes {
+        ...ProductFragment
+      }
+    }
+  }
+  ${ProductFragment}`;
+
 export const ProductQuery = `#graphql
   query Product($handle: String) {
     product(handle: $handle) {
-      id
-      title
+      ...ProductFragment
       description
       options {
         name
         values
       }
-      priceRange {
-        minVariantPrice {
-          currencyCode
-          amount
-        }
-      }
       images(first: 20) {
-        edges {
-          node {
-            url
-          }
+        nodes {
+          id
+          url
+          width
+          height
         }
       }
       variants(first: 250) {
-        edges {
-          node {
-            id
-            availableForSale
-            selectedOptions {
-              name
-              value
-            }
+        nodes {
+          id
+          availableForSale
+          selectedOptions {
+            name
+            value
           }
         }
       }
     }
-  }`;
+  }
+  ${ProductFragment}`;
 
 export const ProductRecommendationsQuery = `#graphql
   query ProductRecommendations($productId: ID!) {
     productRecommendations(productId: $productId) {
-      id
-      title
-      handle
-      featuredImage {
-        url
-      }
-      priceRange {
-        minVariantPrice {
-          currencyCode
-          amount
-        }
-      }
+      ...ProductFragment
     }
-  }`
+  }
+  ${ProductFragment}`;

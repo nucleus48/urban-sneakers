@@ -20,20 +20,21 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { get } = await cookies();
-  const cartId = get(COOKIE.CART_ID)?.value;
-  const cart = getCart(cartId);
+  const cartPromise = cookies().then(({ get }) => {
+    const cartId = get(COOKIE.CART_ID)?.value;
+    return cartId ? getCart(cartId) : undefined;
+  });
 
   return (
     <html lang="en">
       <body className={`${openSans.variable} antialiased`}>
         <TooltipProvider>
-          <CartProvider cartPromise={cart}>
+          <CartProvider cartPromise={cartPromise}>
             <Header />
             <main className="container py-4">{children}</main>
           </CartProvider>
