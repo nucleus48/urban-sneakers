@@ -7,6 +7,7 @@ import { ProductOption, SelectedOption } from "@/types/storefront.types";
 import { Fragment, useMemo, useState } from "react";
 import { useCart } from "./providers/cart-provider";
 import { ProductQuery } from "@/types/storefront.generated";
+import { addItemToCart } from "@/lib/actions";
 
 export function ProductDescription({
   options,
@@ -20,6 +21,8 @@ export function ProductDescription({
   const [selectedOptions, setSelectedOptions] = useState<
     Pick<SelectedOption, "name" | "value">[]
   >([]);
+  const [selectedVariant, setSelectedVariant] =
+    useState<(typeof variants)["nodes"][number]>();
 
   const availableOptions = useMemo(() => {
     const fileterdVaraints = variants.nodes.filter(
@@ -31,6 +34,8 @@ export function ProductDescription({
           ),
         ),
     );
+
+    if (fileterdVaraints.length == 1) setSelectedVariant(fileterdVaraints[0]);
 
     const availableOptions = fileterdVaraints.reduce(
       (accumulation, variant) => {
@@ -63,7 +68,14 @@ export function ProductDescription({
     });
 
   return (
-    <form className="space-y-4" action={() => setIsCartOpen(true)}>
+    <form
+      className="space-y-4"
+      action={async () => {
+        if (!selectedVariant) return;
+        setIsCartOpen(true);
+        await addItemToCart(selectedVariant.id);
+      }}
+    >
       {options.map(({ name, values }) => (
         <div key={name} className="space-y-2">
           <div className="font-medium">{name}</div>

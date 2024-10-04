@@ -8,7 +8,6 @@ import { useCart } from "./providers/cart-provider";
 
 export function CartSheet() {
   const { isCartOpen, setIsCartOpen, optimisticCart } = useCart();
-  console.log(optimisticCart)
 
   return (
     <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>

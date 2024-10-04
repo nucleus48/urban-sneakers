@@ -8,7 +8,14 @@ export enum ROUTE {
 }
 
 export enum COOKIE {
-  CART_ID = "cart_id"
+  CART_ID = "cart_id",
 }
 
-export const PRODUCTS_PAGE_LENGTH = 10
+export const SECURE_COOKIE_ATTRIBUTES = {
+  httpOnly: true,
+  secure: true,
+  sameSite: "lax",
+  path: "/",
+} as const;
+
+export const PRODUCTS_PAGE_LENGTH = 10;

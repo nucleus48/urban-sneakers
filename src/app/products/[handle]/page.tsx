@@ -154,7 +154,7 @@ async function ProductRecommendations({ params }: { params: Params }) {
     <section>
       <h2 className="font-semibold text-xl mb-4">Recommendations</h2>
       <ScrollArea>
-        <div className="flex w-max gap-4">
+        <div className="flex w-max gap-4 *:w-[300px]">
           {productRecommendations.map((product) => (
             <ProductCard key={product.id} {...product} />
           ))}

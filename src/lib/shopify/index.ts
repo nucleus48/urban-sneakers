@@ -15,7 +15,7 @@ import {
   CartLinesAddMutation,
   CartQuery,
 } from "./gql/cart";
-import { CartInput, CartLine, CartLineInput } from "@/types/storefront.types";
+import { CartInput, CartLineInput } from "@/types/storefront.types";
 
 const client = createStorefrontApiClient({
   apiVersion: process.env.SHOPIFY_API_VERSION!,
