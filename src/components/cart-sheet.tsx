@@ -1,13 +1,14 @@
 "use client";
 
-import { ShoppingBagIcon } from "lucide-react";
+import { ShoppingBagIcon, ShoppingCartIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { useCart } from "./providers/cart-provider";
 
 export function CartSheet() {
-  const { isCartOpen, setIsCartOpen } = useCart();
+  const { isCartOpen, setIsCartOpen, optimisticCart } = useCart();
+  console.log(optimisticCart)
 
   return (
     <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
@@ -23,7 +24,16 @@ export function CartSheet() {
           <p>Cart</p>
         </TooltipContent>
       </Tooltip>
-      <SheetContent></SheetContent>
+      <SheetContent className="w-full">
+        {optimisticCart ? (
+          <div></div>
+        ) : (
+          <div className="size-full flex flex-col items-center justify-center gap-2">
+            <ShoppingCartIcon className="size-24" />
+            <p className="font-semibold text-lg">Cart is empty</p>
+          </div>
+        )}
+      </SheetContent>
     </Sheet>
   );
 }

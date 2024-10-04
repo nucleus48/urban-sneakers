@@ -35,7 +35,7 @@ export function NavSheet({ className }: { className?: string }) {
           <p>Menu</p>
         </TooltipContent>
       </Tooltip>
-      <SheetContent side="left" className="py-12">
+      <SheetContent side="left" className="py-12 w-full">
         <SearchBar />
         <nav className="mt-4">
           <ul className="space-y-2">
