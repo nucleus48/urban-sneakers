@@ -11,7 +11,7 @@ export function ProductCard({
 }: ProductsQuery["products"]["nodes"][number]) {
   return (
     <div className="text-center space-y-2">
-      <Link className="contents" href={`/products/${handle}`}>
+      <Link prefetch className="contents" href={`/products/${handle}`}>
         <Image
           src={featuredImage?.url}
           alt={`${title} preview`}

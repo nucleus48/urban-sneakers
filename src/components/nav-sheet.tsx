@@ -47,7 +47,7 @@ export function NavSheet({ className }: { className?: string }) {
                   className="w-full justify-start gap-2 text-lg"
                   asChild
                 >
-                  <Link href={navLink.href}>
+                  <Link prefetch href={navLink.href}>
                     <navLink.icon className="size-5" />
                     <span>{navLink.text}</span>
                   </Link>
