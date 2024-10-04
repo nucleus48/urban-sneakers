@@ -12,9 +12,9 @@ import { Suspense } from "react";
 import { currencyFormatter } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import ProductCard from "@/components/product-card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { ProductDescription } from "@/components/product-description";
+import { ProductCard } from "@/components/product-card";
 
 type Params = Promise<{ handle: string }>;
 

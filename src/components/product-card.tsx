@@ -10,7 +10,7 @@ export type ProductCardProps = {
   currencyCode: string;
 };
 
-export default function ProductCard({
+export function ProductCard({
   handle,
   imageUrl,
   name,

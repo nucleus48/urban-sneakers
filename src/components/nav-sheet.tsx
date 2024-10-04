@@ -15,7 +15,7 @@ import { SearchBar } from "./search-bar";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function NavSheet({ className }: { className?: string }) {
+export function NavSheet({ className }: { className?: string }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 

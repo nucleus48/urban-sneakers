@@ -1,24 +1,23 @@
 "use client";
 
-import { createContext, use, useState } from "react";
-
-export type Cart = {
-  id: string;
-};
+import { CartQuery } from "@/types/storefront.generated";
+import { createContext, use, useOptimistic, useState } from "react";
 
 export type CartContextValue = {
   isCartOpen: boolean;
   setIsCartOpen: (value: boolean) => void;
-  cart?: Cart;
+  optimisticCart: CartQuery["cart"];
 };
 
 const CartContext = createContext<CartContextValue | null>(null);
 
-export default function CartProvider({ children }: React.PropsWithChildren) {
+export function CartProvider({ children, cartPromise }: React.PropsWithChildren<{cartPromise: Promise<CartQuery["cart"]>}>) {
+  const cart = use(cartPromise)
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [optimisticCart, dispatchOptimisticCart] = useOptimistic(cart)
 
   return (
-    <CartContext.Provider value={{ isCartOpen, setIsCartOpen }}>
+    <CartContext.Provider value={{ isCartOpen, setIsCartOpen, optimisticCart }}>
       {children}
     </CartContext.Provider>
   );

@@ -10,6 +10,7 @@ import {
   ProductRecommendationsQuery,
   ProductsQuery,
 } from "./gql/product";
+import { CartQuery } from "./gql/cart";
 
 const client = createStorefrontApiClient({
   apiVersion: process.env.SHOPIFY_API_VERSION!,
@@ -75,4 +76,12 @@ export const getProductRecommendations = cache(async (id: string) => {
     price: product.priceRange.minVariantPrice.amount as number,
     currencyCode: product.priceRange.minVariantPrice.currencyCode,
   }));
+});
+
+export const getCart = cache(async (cartId?: string) => {
+  if (!cartId) return undefined;
+
+  const { cart } = await storefrontFetch(CartQuery, { variables: { cartId } });
+
+  return cart;
 });

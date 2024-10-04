@@ -1,4 +1,4 @@
-import ProductCard from "@/components/product-card";
+import { ProductCard } from "@/components/product-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getProducts } from "@/lib/shopify";
 import { Suspense } from "react";
