@@ -1,3 +1,5 @@
+import { ProductVariantFragment } from "./product";
+
 export const CartQuery = `#graphql
 query Cart($cartId: ID!) {
   cart(id: $cartId) {
@@ -9,15 +11,7 @@ query Cart($cartId: ID!) {
         quantity
         merchandise {
           ... on ProductVariant {
-            id
-            title
-            price {
-              amount
-              currencyCode
-            }
-            image {
-              url
-            }
+            ...ProductVariantFragment
           }
         }
       }
@@ -37,7 +31,8 @@ query Cart($cartId: ID!) {
       }
     }
   }
-}`;
+}
+${ProductVariantFragment}`;
 
 export const CartCreateMutation = `#graphql
 mutation CartCreate($cartInput: CartInput) {

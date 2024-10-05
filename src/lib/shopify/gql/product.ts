@@ -1,4 +1,4 @@
-const ProductFragment = `#graphql
+export const ProductFragment = `#graphql
   fragment ProductFragment on Product {
     id
     title
@@ -13,6 +13,26 @@ const ProductFragment = `#graphql
       }
     }
   }`;
+
+export const ProductVariantFragment = `#graphql
+  fragment ProductVariantFragment on ProductVariant {
+    id
+    title
+    availableForSale
+    image {
+      url
+      width
+      height
+    }
+    price {
+      amount
+      currencyCode
+    }
+    selectedOptions {
+      name
+      value
+    }
+  }`
 
 export const ProductsQuery = `#graphql
   query Products($first: Int) {
@@ -43,16 +63,12 @@ export const ProductQuery = `#graphql
       }
       variants(first: 250) {
         nodes {
-          id
-          availableForSale
-          selectedOptions {
-            name
-            value
-          }
+          ...ProductVariantFragment
         }
       }
     }
   }
+  ${ProductVariantFragment}
   ${ProductFragment}`;
 
 export const ProductRecommendationsQuery = `#graphql

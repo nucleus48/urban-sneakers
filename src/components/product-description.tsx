@@ -17,7 +17,7 @@ export function ProductDescription({
   NonNullable<ProductQuery["product"]>,
   "options" | "variants" | "description"
 >) {
-  const { setIsCartOpen } = useCart();
+  const { addOptimisticCartLine } = useCart();
   const [selectedOptions, setSelectedOptions] = useState<
     Pick<SelectedOption, "name" | "value">[]
   >([]);
@@ -72,7 +72,11 @@ export function ProductDescription({
       className="space-y-4"
       action={async () => {
         if (!selectedVariant) return;
-        setIsCartOpen(true);
+        addOptimisticCartLine({
+          id: crypto.randomUUID(),
+          quantity: 1,
+          merchandise: selectedVariant,
+        });
         await addItemToCart(selectedVariant.id);
       }}
     >

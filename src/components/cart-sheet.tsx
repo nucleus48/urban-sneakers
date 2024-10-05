@@ -5,9 +5,21 @@ import { Button } from "./ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { useCart } from "./providers/cart-provider";
+import { useEffect, useRef, useState } from "react";
 
 export function CartSheet() {
-  const { isCartOpen, setIsCartOpen, optimisticCart } = useCart();
+  const { optimisticCart } = useCart();
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const firstRender = useRef(true);
+
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+
+    setIsCartOpen(true);
+  }, [optimisticCart]);
 
   return (
     <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
