@@ -6,6 +6,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { useCart } from "./providers/cart-provider";
 import { useEffect, useRef, useState } from "react";
+import { CartLine } from "./cart-line";
+import { ScrollArea } from "./ui/scroll-area";
 
 export function CartSheet() {
   const { optimisticCart } = useCart();
@@ -37,7 +39,13 @@ export function CartSheet() {
       </Tooltip>
       <SheetContent className="w-full">
         {optimisticCart ? (
-          <div></div>
+          <ScrollArea className="h-full">
+            <div>
+              {optimisticCart.lines.nodes.map((line) => (
+                <CartLine key={line.id} {...line} />
+              ))}
+            </div>
+          </ScrollArea>
         ) : (
           <div className="size-full flex flex-col items-center justify-center gap-2">
             <ShoppingCartIcon className="size-24" />

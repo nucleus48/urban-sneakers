@@ -28,6 +28,9 @@ export const ProductVariantFragment = `#graphql
       amount
       currencyCode
     }
+    product {
+      title
+    }
     selectedOptions {
       name
       value

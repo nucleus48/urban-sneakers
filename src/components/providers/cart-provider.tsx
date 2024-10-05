@@ -7,7 +7,6 @@ import {
   use,
   useCallback,
   useOptimistic,
-  useState,
 } from "react";
 
 export type CartContextValue = {
