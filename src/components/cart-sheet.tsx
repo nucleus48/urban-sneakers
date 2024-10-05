@@ -40,7 +40,7 @@ export function CartSheet() {
       <SheetContent className="w-full">
         {optimisticCart ? (
           <ScrollArea className="h-full">
-            <div>
+            <div className="space-y-4 mt-4">
               {optimisticCart.lines.nodes.map((line) => (
                 <CartLine key={line.id} {...line} />
               ))}
