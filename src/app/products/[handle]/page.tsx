@@ -96,7 +96,7 @@ async function ProductInfo({ params }: { params: Params }) {
 function ProductInfoSkeleton() {
   return (
     <>
-      <div className="space-y-4">
+      <div className="space-y-4 md:max-w-md mx-auto">
         <Skeleton className="w-full aspect-[1.2]" />
         <div className="flex gap-2 *:basis-1/3">
           <Skeleton className="aspect-square" />
@@ -104,14 +104,17 @@ function ProductInfoSkeleton() {
           <Skeleton className="aspect-square" />
         </div>
       </div>
-      <div className="space-y-4">
+      <div className="space-y-4 md:max-w-md">
         <div className="space-y-2">
-          <Skeleton className="w-2/3 h-5" />
+          <Skeleton className="w-full h-5" />
+          <Skeleton className="w-1/3 h-5" />
           <Skeleton className="w-20 h-5" />
         </div>
         <div className="space-y-2">
           <Skeleton className="w-16 h-4" />
           <div className="flex gap-4">
+            <Skeleton className="size-8 rounded-full" />
+            <Skeleton className="size-8 rounded-full" />
             <Skeleton className="size-8 rounded-full" />
             <Skeleton className="size-8 rounded-full" />
             <Skeleton className="size-8 rounded-full" />

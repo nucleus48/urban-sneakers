@@ -19,3 +19,4 @@ export const SECURE_COOKIE_ATTRIBUTES = {
 } as const;
 
 export const PRODUCTS_PAGE_LENGTH = 10;
+export const STORE_PASSWORD = "1"
