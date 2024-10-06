@@ -13,9 +13,15 @@ import {
 import {
   CartCreateMutation,
   CartLinesAddMutation,
+  CartLinesRemoveMutation,
+  CartLinesUpdateMutation,
   CartQuery,
 } from "./gql/cart";
-import { CartInput, CartLineInput } from "@/types/storefront.types";
+import {
+  CartInput,
+  CartLineInput,
+  CartLineUpdateInput,
+} from "@/types/storefront.types";
 
 const client = createStorefrontApiClient({
   apiVersion: process.env.SHOPIFY_API_VERSION!,
@@ -72,4 +78,21 @@ export const addCartLines = async (cartId: string, lines: CartLineInput[]) => {
     variables: { cartId, lines },
   });
   return cartLinesAdd?.cart?.id;
+};
+
+export const updateCartLines = async (
+  cartId: string,
+  lines: CartLineUpdateInput[],
+) => {
+  const { cartLinesUpdate } = await storefrontFetch(CartLinesUpdateMutation, {
+    variables: { cartId, lines },
+  });
+  return cartLinesUpdate?.cart?.id;
+};
+
+export const removeCartLines = async (cartId: string, lineIds: string[]) => {
+  const { cartLinesRemove } = await storefrontFetch(CartLinesRemoveMutation, {
+    variables: { cartId, lineIds },
+  });
+  return cartLinesRemove?.cart?.id;
 };

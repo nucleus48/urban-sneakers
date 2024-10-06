@@ -7,8 +7,14 @@ query Cart($cartId: ID!) {
     checkoutUrl
     lines(first: 10) {
       nodes {
-          id
+        id
         quantity
+        cost {
+          totalAmount {
+            amount
+            currencyCode
+          }
+        }
         merchandise {
           ... on ProductVariant {
             ...ProductVariantFragment
@@ -46,6 +52,24 @@ mutation CartCreate($cartInput: CartInput) {
 export const CartLinesAddMutation = `#graphql
 mutation CartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {
   cartLinesAdd(cartId: $cartId, lines: $lines) {
+    cart {
+      id
+    }
+  }
+}`;
+
+export const CartLinesUpdateMutation = `#graphql
+mutation CartLinesUpdate($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
+  cartLinesUpdate(cartId: $cartId, lines: $lines) {
+    cart {
+      id
+    }
+  }
+}`;
+
+export const CartLinesRemoveMutation = `#graphql
+mutation CartLinesRemove($cartId: ID!, $lineIds: [ID!]!) {
+  cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
     cart {
       id
     }

@@ -1,13 +1,16 @@
-import { User2Icon } from "lucide-react";
+import { ShoppingBagIcon, User2Icon } from "lucide-react";
 import { Button } from "../ui/button";
 import { Tooltip, TooltipContent } from "../ui/tooltip";
 import { TooltipTrigger } from "@radix-ui/react-tooltip";
-import { BRAND_NAME, ROUTE } from "@/lib/constants";
+import { BRAND_NAME, COOKIE, ROUTE } from "@/lib/constants";
 import { Logo } from "../ui/logo";
 import { SearchBar } from "../search-bar";
 import { CartSheet } from "../cart-sheet";
 import { NavSheet } from "../nav-sheet";
 import Link from "next/link";
+import { cookies } from "next/headers";
+import { getCart } from "@/lib/shopify";
+import { Suspense } from "react";
 
 export function Header() {
   const menuLinks = [
@@ -23,12 +26,16 @@ export function Header() {
         <div className="flex size-10 border rounded-md items-center justify-center">
           <Logo />
         </div>
-        <div className="font-semibold text-lg mr-auto md:mr-0 lg:mr-auto">{BRAND_NAME}</div>
+        <div className="font-semibold text-lg mr-auto md:mr-0 lg:mr-auto">
+          {BRAND_NAME}
+        </div>
         <nav className="mr-auto">
           <ul className="md:flex hidden gap-2 lg:gap-4 text-sm font-medium">
             {menuLinks.map((menuLink) => (
               <li key={menuLink.href} className="text-muted-foreground">
-                <Link prefetch href={menuLink.href}>{menuLink.text}</Link>
+                <Link prefetch href={menuLink.href}>
+                  {menuLink.text}
+                </Link>
               </li>
             ))}
           </ul>
@@ -48,8 +55,32 @@ export function Header() {
             <p>Account</p>
           </TooltipContent>
         </Tooltip>
-        <CartSheet />
+        <Suspense fallback={<CartSkeleton />}>
+          <Cart />
+        </Suspense>
       </div>
     </header>
+  );
+}
+
+async function Cart() {
+  const cartId = (await cookies()).get(COOKIE.CART_ID)?.value;
+  const cart = cartId ? await getCart(cartId) : undefined;
+
+  return <CartSheet cart={cart} />;
+}
+
+function CartSkeleton() {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button variant={"outline"} size={"icon"}>
+          <ShoppingBagIcon />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>Cart</p>
+      </TooltipContent>
+    </Tooltip>
   );
 }

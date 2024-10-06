@@ -19,6 +19,7 @@ export const ProductVariantFragment = `#graphql
     id
     title
     availableForSale
+    quantityAvailable
     image {
       url
       width
@@ -35,7 +36,7 @@ export const ProductVariantFragment = `#graphql
       name
       value
     }
-  }`
+  }`;
 
 export const ProductsQuery = `#graphql
   query Products($first: Int) {

@@ -2,16 +2,22 @@
 
 import { CartQuery } from "@/types/storefront.generated";
 import { CurrencyCode } from "@/types/storefront.types";
-import { createContext, use, useCallback, useOptimistic } from "react";
+import { createContext, use, useOptimistic, useState } from "react";
+
+export type Cart = CartQuery["cart"];
+
+export type CartLine = NonNullable<CartQuery["cart"]>["lines"]["nodes"][number];
 
 export type CartContextValue = {
-  optimisticCart: CartQuery["cart"];
+  isCartOpen: boolean;
+  optimisticCart: Cart;
+  setIsCartOpen: (value: boolean) => void;
+  setCart: (value: Cart) => void;
   addOptimisticCartLine: (cartLine: CartLine) => void;
+  removeOptimisticCartLine: (id: string) => void;
   incrementOptimisticCartLine: (id: string) => void;
   decrementOptimisticCartLine: (id: string) => void;
 };
-
-export type CartLine = NonNullable<CartQuery["cart"]>["lines"]["nodes"][number];
 
 export const CartContext = createContext<CartContextValue | null>(null);
 
@@ -19,6 +25,7 @@ export enum CART_ACTION_TYPE {
   ADD_LINE,
   INCREMENT_LINE,
   DECREMENT_LINE,
+  REMOVE_LINE,
 }
 
 export type CartActionAddLine = {
@@ -26,83 +33,58 @@ export type CartActionAddLine = {
   payload: CartLine;
 };
 
-export type CartActionIncrementLine = {
-  type: CART_ACTION_TYPE.INCREMENT_LINE;
-  payload: Record<"id", string>;
-};
-
-export type CartActionDecrementLine = {
-  type: CART_ACTION_TYPE.DECREMENT_LINE;
-  payload: Record<"id", string>;
-};
-
 export type CartAction =
-  | CartActionAddLine
-  | CartActionDecrementLine
-  | CartActionIncrementLine;
+  | {
+      type: Exclude<CART_ACTION_TYPE, CART_ACTION_TYPE.ADD_LINE>;
+      payload: { id: string };
+    }
+  | CartActionAddLine;
 
-const emptyCart = (
-  currencyCode: CurrencyCode,
-): NonNullable<CartQuery["cart"]> => ({
-  id: "",
-  checkoutUrl: "",
-  lines: { nodes: [] },
-  cost: {
-    totalAmount: {
-      amount: 0,
-      currencyCode,
-    },
-    subtotalAmount: {
-      amount: 0,
-      currencyCode,
-    },
-  },
-});
-
-export function CartProvider({
-  children,
-  cartPromise,
-}: React.PropsWithChildren<{ cartPromise: Promise<CartQuery["cart"]> }>) {
-  const initialCart = use(cartPromise);
+export function CartProvider({ children }: React.PropsWithChildren) {
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cart, setCart] = useState<Cart>();
   const [optimisticCart, dispatchOptimisticCart] = useOptimistic(
-    initialCart,
+    cart,
     optimisticCartReducer,
   );
 
-  const addOptimisticCartLine = useCallback(
-    (cartLine: CartLine) =>
-      dispatchOptimisticCart({
-        type: CART_ACTION_TYPE.ADD_LINE,
-        payload: cartLine,
-      }),
-    [dispatchOptimisticCart],
-  );
+  const addOptimisticCartLine = (cartLine: CartLine) => {
+    dispatchOptimisticCart({
+      type: CART_ACTION_TYPE.ADD_LINE,
+      payload: cartLine,
+    });
+    setIsCartOpen(true);
+  };
 
-  const incrementOptimisticCartLine = useCallback(
-    (id: string) =>
-      dispatchOptimisticCart({
-        type: CART_ACTION_TYPE.INCREMENT_LINE,
-        payload: { id },
-      }),
-    [dispatchOptimisticCart],
-  );
+  const incrementOptimisticCartLine = (id: string) =>
+    dispatchOptimisticCart({
+      type: CART_ACTION_TYPE.INCREMENT_LINE,
+      payload: { id },
+    });
 
-  const decrementOptimisticCartLine = useCallback(
-    (id: string) =>
-      dispatchOptimisticCart({
-        type: CART_ACTION_TYPE.DECREMENT_LINE,
-        payload: { id },
-      }),
-    [dispatchOptimisticCart],
-  );
+  const decrementOptimisticCartLine = (id: string) =>
+    dispatchOptimisticCart({
+      type: CART_ACTION_TYPE.DECREMENT_LINE,
+      payload: { id },
+    });
+
+  const removeOptimisticCartLine = (id: string) =>
+    dispatchOptimisticCart({
+      type: CART_ACTION_TYPE.REMOVE_LINE,
+      payload: { id },
+    });
 
   return (
     <CartContext.Provider
       value={{
+        setCart,
+        isCartOpen,
         optimisticCart,
         addOptimisticCartLine,
+        removeOptimisticCartLine,
         incrementOptimisticCartLine,
         decrementOptimisticCartLine,
+        setIsCartOpen,
       }}
     >
       {children}
@@ -114,82 +96,110 @@ export function useCart() {
   return use(CartContext)!;
 }
 
-function optimisticCartReducer(state: CartQuery["cart"], action: CartAction) {
+function optimisticCartReducer(state: Cart, action: CartAction): Cart {
   switch (action.type) {
-    case CART_ACTION_TYPE.ADD_LINE: {
-      const newState =
+    case CART_ACTION_TYPE.ADD_LINE:
+      const cart =
         state ?? emptyCart(action.payload.merchandise.price.currencyCode);
-      const lineExist = newState.lines.nodes.find(
-        (line) => line.merchandise.id == action.payload.merchandise.id,
-      );
+      const lines = addOrUpdateCartLine(cart.lines.nodes, action.payload);
+      return updateCartCost({ ...cart, lines: { nodes: lines } });
 
-      if (!lineExist)
-        return updateCartCost({
-          ...newState,
-          lines: { nodes: [...newState.lines.nodes, action.payload] },
-        });
-
-      const newLines = newState.lines.nodes.map((line) =>
-        line.merchandise.id == action.payload.id
-          ? { ...line, quantity: line.quantity + 1 }
-          : line,
-      );
-
-      return updateCartCost({
-        ...newState,
-        lines: { nodes: newLines },
-      });
-    }
-
-    case CART_ACTION_TYPE.INCREMENT_LINE: {
-      if (!state) return;
-
-      const newLines = state.lines.nodes.map((line) =>
-        line.merchandise.id == action.payload.id
-          ? { ...line, quantity: line.quantity + 1 }
-          : line,
-      );
-
-      return updateCartCost({
-        ...state,
-        lines: { nodes: newLines },
-      });
-    }
-
-    case CART_ACTION_TYPE.DECREMENT_LINE: {
-      if (!state) return;
-
-      const newLines = state.lines.nodes
-        .map((line) =>
+    case CART_ACTION_TYPE.INCREMENT_LINE:
+      if (state) {
+        const lines = state.lines.nodes.map((line) =>
           line.merchandise.id == action.payload.id
-            ? { ...line, quantity: line.quantity - 1 }
+            ? { ...line, quantity: line.quantity + 1 }
             : line,
-        )
-        .filter((line) => line.quantity > 0);
+        );
 
-      return updateCartCost({
-        ...state,
-        lines: { nodes: newLines },
-      });
-    }
+        return updateCartCost({ ...state, lines: { nodes: lines } });
+      }
+
+    case CART_ACTION_TYPE.DECREMENT_LINE:
+      if (state) {
+        const lines = state.lines.nodes
+          .map((line) =>
+            line.merchandise.id == action.payload.id
+              ? { ...line, quantity: line.quantity - 1 }
+              : line,
+          )
+          .filter((line) => line.quantity > 0);
+
+        return updateCartCost({ ...state, lines: { nodes: lines } });
+      }
+
+    case CART_ACTION_TYPE.REMOVE_LINE:
+      if (state) {
+        const lines = state.lines.nodes.filter(
+          (line) => line.merchandise.id != action.payload.id,
+        );
+
+        return updateCartCost({ ...state, lines: { nodes: lines } });
+      }
 
     default:
       return state;
   }
 }
 
-function updateCartCost(cart: NonNullable<CartQuery["cart"]>) {
-  const subTotalAmount = cart.lines.nodes.reduce(
-    (amount, curr) => parseFloat(curr.merchandise.price.amount) + amount,
+function emptyCart(currencyCode: CurrencyCode): NonNullable<Cart> {
+  return {
+    id: "",
+    checkoutUrl: "",
+    lines: { nodes: [] },
+    cost: {
+      totalAmount: {
+        amount: 0,
+        currencyCode,
+      },
+      subtotalAmount: {
+        amount: 0,
+        currencyCode,
+      },
+    },
+  };
+}
+
+function updateCartCost<TCart extends NonNullable<CartQuery["cart"]>>(
+  cart: TCart,
+): TCart {
+  const lines = cart.lines.nodes.map((line) => ({
+    ...line,
+    cost: {
+      totalAmount: {
+        ...line.cost.totalAmount,
+        amount: line.quantity * parseInt(line.merchandise.price.amount),
+      },
+    },
+  }));
+
+  const subtotal = lines.reduce(
+    (amount, curr) => amount + curr.cost.totalAmount.amount,
     0,
   );
-  const totalAmount: number =
-    subTotalAmount + (parseFloat(cart.cost.totalTaxAmount?.amount) || 0);
-  const subTotal = { ...cart.cost.subtotalAmount, amount: subTotalAmount };
-  const total = { ...cart.cost.totalAmount, amount: totalAmount };
 
-  return {
-    ...cart,
-    cost: { ...cart.cost, subtotalAmount: subTotal, totalAmount: total },
+  const total = subtotal + (parseFloat(cart.cost.totalTaxAmount?.amount) || 0);
+  const currencyCode = cart.cost.subtotalAmount.currencyCode;
+
+  const cartCost = {
+    subtotalAmount: { amount: subtotal, currencyCode },
+    totalAmount: { amount: total, currencyCode },
+    totalTaxAmount: cart.cost.totalTaxAmount,
   };
+
+  return { ...cart, cost: cartCost, lines: { nodes: lines } };
+}
+
+function addOrUpdateCartLine(lines: CartLine[], line: CartLine): CartLine[] {
+  const lineExist = lines.some(
+    (line) => line.merchandise.id == line.merchandise.id,
+  );
+
+  if (!lineExist) return [...lines, line];
+
+  return lines.map((value) =>
+    value.merchandise.id == line.merchandise.id
+      ? { ...value, quantity: value.quantity + line.quantity }
+      : value,
+  );
 }
