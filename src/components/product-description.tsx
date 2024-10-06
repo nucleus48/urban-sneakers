@@ -76,13 +76,16 @@ export function ProductDescription({
           id: crypto.randomUUID(),
           quantity: 1,
           merchandise: selectedVariant,
+          cost: {
+            totalAmount: selectedVariant.price,
+          },
         });
         await addItemToCart(selectedVariant.id);
       }}
     >
       {options.map(({ name, values }) => (
         <div key={name} className="space-y-2">
-          <div className="font-medium">{name}</div>
+          <div className="font-medium uppercase">{name}</div>
           <div className="flex gap-4 flex-wrap">
             {values.map((value) => {
               const isAvailable = availableOptions.some(

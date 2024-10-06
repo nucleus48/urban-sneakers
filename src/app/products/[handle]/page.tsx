@@ -21,7 +21,7 @@ type Params = Promise<{ handle: string }>;
 export default function ProductPage({ params }: { params: Params }) {
   return (
     <div>
-      <div className="md:flex space-y-8 gap-8 items-start *:flex-1 mb-8">
+      <div className="md:flex space-y-8 gap-8 items-start mb-8 *:flex-1">
         <Suspense fallback={<ProductInfoSkeleton />}>
           <ProductInfo params={params} />
         </Suspense>
@@ -43,7 +43,7 @@ async function ProductInfo({ params }: { params: Params }) {
 
   return (
     <>
-      <Carousel orientation="horizontal">
+      <Carousel orientation="horizontal" className="md:max-w-md mx-auto">
         <CarouselMainContainer>
           {product.images.nodes.map((image) => (
             <SliderMainItem key={image.id}>
@@ -53,7 +53,7 @@ async function ProductInfo({ params }: { params: Params }) {
                 alt="carousel item"
                 width={image.width || 300}
                 height={image.height || 300}
-                className="w-full brightness-95 rounded-md"
+                className="w-full rounded-md"
               />
             </SliderMainItem>
           ))}
@@ -67,13 +67,13 @@ async function ProductInfo({ params }: { params: Params }) {
                 alt="carousel item"
                 width={image.width || 200}
                 height={image.height || 200}
-                className="w-full brightness-95 rounded-md"
+                className="w-full rounded-md"
               />
             </SliderThumbItem>
           ))}
         </CarouselThumbsContainer>
       </Carousel>
-      <section className="space-y-4">
+      <section className="space-y-4 md:max-w-md">
         <div className="space-y-2">
           <h1 className="font-semibold text-2xl">{product.title}</h1>
           <div className="text-xl text-primary">
@@ -134,7 +134,9 @@ function ProductInfoSkeleton() {
           <Skeleton className="w-full h-4" />
           <Skeleton className="w-24 h-4" />
         </div>
-        <Button className="w-full">Add To Cart</Button>
+        <Button className="w-full" disabled>
+          Add To Cart
+        </Button>
       </div>
     </>
   );

@@ -1,26 +1,39 @@
 "use client";
 
-import { ShoppingBagIcon, ShoppingCartIcon } from "lucide-react";
+import { ShoppingBagIcon, ShoppingCartIcon, XIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
-import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "./ui/sheet";
 import { ScrollArea } from "./ui/scroll-area";
 import { CartQuery } from "@/types/storefront.generated";
 import Image from "next/image";
 import { CartLine as CartLineType, useCart } from "./providers/cart-provider";
 import { currencyFormatter } from "@/lib/utils";
 import { MinusIcon, PlusIcon } from "lucide-react";
-import { useEffect } from "react";
-import { updateCartLine } from "@/lib/actions";
+import { useEffect, useState } from "react";
+import { removeCartLine, updateCartLine } from "@/lib/actions";
 import { toast } from "../hooks/use-toast";
+import { VisuallyHidden } from "./ui/visually-hidden";
+import Link from "next/link";
 
 export function CartSheet({ cart }: { cart: CartQuery["cart"] }) {
-  const { isCartOpen, optimisticCart, setCart, setIsCartOpen } = useCart();
+  const [isOpen, setIsOpen] = useState(false);
+  const { optimisticCart, setCart } = useCart();
 
   useEffect(() => setCart(cart), [cart, setCart]);
 
+  useEffect(() => {
+    if (!optimisticCart) return;
+
+    const isCartOpenAttribute = optimisticCart.attributes.some(
+      (value) => value.key == "isCartOpen",
+    );
+
+    if (isCartOpenAttribute) setIsOpen(true);
+  }, [optimisticCart]);
+
   return (
-    <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <Tooltip>
         <TooltipTrigger asChild>
           <SheetTrigger asChild>
@@ -33,15 +46,21 @@ export function CartSheet({ cart }: { cart: CartQuery["cart"] }) {
           <p>Cart</p>
         </TooltipContent>
       </Tooltip>
-      <SheetContent className="w-full">
-        {optimisticCart ? (
-          <ScrollArea className="h-full">
-            <div className="space-y-4 mt-4">
-              {optimisticCart.lines.nodes.map((line) => (
-                <CartLine key={line.id} {...line} />
-              ))}
-            </div>
-          </ScrollArea>
+      <SheetContent className="w-full p-4">
+        <VisuallyHidden>
+          <SheetTitle>Cart</SheetTitle>
+        </VisuallyHidden>
+        {!!optimisticCart?.lines.nodes.length ? (
+          <div className="grid grid-rows-[1fr_auto] h-full">
+            <ScrollArea>
+              <div className="mt-4">
+                {optimisticCart.lines.nodes.map((line) => (
+                  <CartLine key={line.id} {...line} />
+                ))}
+              </div>
+            </ScrollArea>
+            <CartSummary />
+          </div>
         ) : (
           <div className="size-full flex flex-col items-center justify-center gap-2">
             <ShoppingCartIcon className="size-24" />
@@ -61,12 +80,12 @@ function CartLine({ id, merchandise, cost, quantity }: CartLineType) {
   } = useCart();
 
   return (
-    <div className="grid gap-2 items-end grid-cols-[auto_1fr_auto]">
+    <div className="relative grid gap-2 items-end grid-cols-[auto_1fr_auto] p-4">
       <Image
         src={merchandise.image?.url}
         alt={`${merchandise.title} preview`}
-        width={100}
-        height={100}
+        width={80}
+        height={80}
         className="row-span-2 col-start-1 rounded-md brightness-95"
       />
       <div className="col-start-2 row-start-1 font-semibold truncate text-sm">
@@ -81,7 +100,18 @@ function CartLine({ id, merchandise, cost, quantity }: CartLineType) {
           cost.totalAmount.currencyCode,
         )}
       </div>
-      <form className="row-start-2 col-start-3 flex items-center bg-muted/50 rounded-full self-start">
+      <form className="row-start-2 col-start-3 flex items-center bg-muted/50 rounded-full self-start overflow-hidden">
+        <Button
+          formAction={() => {
+            removeOptimisticCartLine(merchandise.id);
+            removeCartLine(id);
+          }}
+          variant={"secondary"}
+          size={"icon"}
+          className="size-6 rounded-full absolute top-4 left-4 -translate-x-1/2 -translate-y-1/2"
+        >
+          <XIcon className="size-4" />
+        </Button>
         <Button
           formAction={() => {
             decrementOptimisticCartLine(merchandise.id);
@@ -89,7 +119,7 @@ function CartLine({ id, merchandise, cost, quantity }: CartLineType) {
           }}
           variant={"ghost"}
           size={"icon"}
-          className="size-8 rounded-full"
+          className="size-8"
         >
           <MinusIcon className="size-4" />
         </Button>
@@ -107,12 +137,56 @@ function CartLine({ id, merchandise, cost, quantity }: CartLineType) {
           }}
           variant={"ghost"}
           size={"icon"}
-          className="size-8 rounded-full"
+          className="size-8"
         >
           <PlusIcon className="size-4" />
         </Button>
         <div className="flex items-center"></div>
       </form>
     </div>
+  );
+}
+
+function CartSummary() {
+  const { optimisticCart } = useCart();
+  return (
+    <section className="p-4">
+      <article className="*:flex *:justify-between *:py-1 divide-y divide-y-border mb-2">
+        <div>
+          <div>Estimated tax</div>
+          <div>
+            {optimisticCart?.cost.totalTaxAmount
+              ? currencyFormatter(
+                  optimisticCart.cost.totalTaxAmount.amount,
+                  optimisticCart.cost.totalTaxAmount.currencyCode,
+                )
+              : "Calculating..."}
+          </div>
+        </div>
+        <div>
+          <div>Subtotal</div>
+          <div>
+            {optimisticCart &&
+              currencyFormatter(
+                optimisticCart.cost.subtotalAmount.amount,
+                optimisticCart.cost.subtotalAmount.currencyCode,
+              )}
+          </div>
+        </div>
+        <div>
+          <div>Total</div>
+          <div>
+            {optimisticCart &&
+              currencyFormatter(
+                optimisticCart.cost.totalAmount.amount,
+                optimisticCart.cost.totalAmount.currencyCode,
+              )}
+          </div>
+        </div>
+      </article>
+      <Button className="w-full" asChild>
+        <Link href={optimisticCart?.checkoutUrl}>Checkout</Link>
+      </Button>
+    </section>
   );
 }

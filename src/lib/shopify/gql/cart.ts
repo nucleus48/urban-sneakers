@@ -36,6 +36,10 @@ query Cart($cartId: ID!) {
         currencyCode
       }
     }
+    attributes {
+      key
+      value
+    }
   }
 }
 ${ProductVariantFragment}`;

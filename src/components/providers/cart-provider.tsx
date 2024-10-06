@@ -2,17 +2,22 @@
 
 import { CartQuery } from "@/types/storefront.generated";
 import { CurrencyCode } from "@/types/storefront.types";
-import { createContext, use, useOptimistic, useState } from "react";
+import {
+  createContext,
+  Dispatch,
+  SetStateAction,
+  use,
+  useOptimistic,
+  useState,
+} from "react";
 
 export type Cart = CartQuery["cart"];
 
 export type CartLine = NonNullable<CartQuery["cart"]>["lines"]["nodes"][number];
 
 export type CartContextValue = {
-  isCartOpen: boolean;
   optimisticCart: Cart;
-  setIsCartOpen: (value: boolean) => void;
-  setCart: (value: Cart) => void;
+  setCart: Dispatch<SetStateAction<Cart>>;
   addOptimisticCartLine: (cartLine: CartLine) => void;
   removeOptimisticCartLine: (id: string) => void;
   incrementOptimisticCartLine: (id: string) => void;
@@ -41,20 +46,17 @@ export type CartAction =
   | CartActionAddLine;
 
 export function CartProvider({ children }: React.PropsWithChildren) {
-  const [isCartOpen, setIsCartOpen] = useState(false);
   const [cart, setCart] = useState<Cart>();
   const [optimisticCart, dispatchOptimisticCart] = useOptimistic(
     cart,
     optimisticCartReducer,
   );
 
-  const addOptimisticCartLine = (cartLine: CartLine) => {
+  const addOptimisticCartLine = (cartLine: CartLine) =>
     dispatchOptimisticCart({
       type: CART_ACTION_TYPE.ADD_LINE,
       payload: cartLine,
     });
-    setIsCartOpen(true);
-  };
 
   const incrementOptimisticCartLine = (id: string) =>
     dispatchOptimisticCart({
@@ -78,13 +80,11 @@ export function CartProvider({ children }: React.PropsWithChildren) {
     <CartContext.Provider
       value={{
         setCart,
-        isCartOpen,
         optimisticCart,
         addOptimisticCartLine,
         removeOptimisticCartLine,
         incrementOptimisticCartLine,
         decrementOptimisticCartLine,
-        setIsCartOpen,
       }}
     >
       {children}
@@ -102,7 +102,11 @@ function optimisticCartReducer(state: Cart, action: CartAction): Cart {
       const cart =
         state ?? emptyCart(action.payload.merchandise.price.currencyCode);
       const lines = addOrUpdateCartLine(cart.lines.nodes, action.payload);
-      return updateCartCost({ ...cart, lines: { nodes: lines } });
+      return updateCartCost({
+        ...cart,
+        lines: { nodes: lines },
+        attributes: [{ key: "isCartOpen", value: "true" }, ...cart.attributes],
+      });
 
     case CART_ACTION_TYPE.INCREMENT_LINE:
       if (state) {
@@ -157,6 +161,7 @@ function emptyCart(currencyCode: CurrencyCode): NonNullable<Cart> {
         currencyCode,
       },
     },
+    attributes: [],
   };
 }
 
@@ -167,8 +172,8 @@ function updateCartCost<TCart extends NonNullable<CartQuery["cart"]>>(
     ...line,
     cost: {
       totalAmount: {
-        ...line.cost.totalAmount,
         amount: line.quantity * parseInt(line.merchandise.price.amount),
+        currencyCode: line.merchandise.price.currencyCode,
       },
     },
   }));
@@ -184,7 +189,6 @@ function updateCartCost<TCart extends NonNullable<CartQuery["cart"]>>(
   const cartCost = {
     subtotalAmount: { amount: subtotal, currencyCode },
     totalAmount: { amount: total, currencyCode },
-    totalTaxAmount: cart.cost.totalTaxAmount,
   };
 
   return { ...cart, cost: cartCost, lines: { nodes: lines } };

@@ -8,12 +8,13 @@ import {
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
-import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "./ui/sheet";
 import { ROUTE } from "@/lib/constants";
 import Link from "next/link";
 import { SearchBar } from "./search-bar";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { VisuallyHidden } from "./ui/visually-hidden";
 
 export function NavSheet({ className }: { className?: string }) {
   const pathname = usePathname();
@@ -36,6 +37,9 @@ export function NavSheet({ className }: { className?: string }) {
         </TooltipContent>
       </Tooltip>
       <SheetContent side="left" className="py-12 w-full">
+        <VisuallyHidden>
+          <SheetTitle>Navigation Menu</SheetTitle>
+        </VisuallyHidden>
         <SearchBar />
         <nav className="mt-4">
           <ul className="space-y-2">
