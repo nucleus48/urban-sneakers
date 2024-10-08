@@ -31,7 +31,7 @@ export default function RootLayout({
         <TooltipProvider>
           <CartProvider>
             <Header />
-            <main className="container py-4">{children}</main>
+            <main className="py-4">{children}</main>
             <Toaster />
             <StorePassword />
           </CartProvider>

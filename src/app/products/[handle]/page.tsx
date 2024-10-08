@@ -20,7 +20,7 @@ type Params = Promise<{ handle: string }>;
 
 export default function ProductPage({ params }: { params: Params }) {
   return (
-    <div>
+    <div className="container">
       <div className="md:flex space-y-8 gap-8 items-start mb-16 *:flex-1">
         <Suspense fallback={<ProductInfoSkeleton />}>
           <ProductInfo params={params} />

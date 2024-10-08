@@ -99,7 +99,7 @@ function CartLine({ id, merchandise, cost, quantity }: CartLineType) {
             cost.totalAmount.currencyCode,
           )}
         </div>
-        <form className="flex items-center gap-1 bg-secondary rounded-full p-1">
+        <form className="flex justify-between items-center gap-1 bg-secondary rounded-md p-1">
           <Button
             formAction={() => {
               removeOptimisticCartLine(merchandise.id);
@@ -118,7 +118,7 @@ function CartLine({ id, merchandise, cost, quantity }: CartLineType) {
             }}
             variant={"ghost"}
             size={"icon"}
-            className="size-6 rounded-l-full"
+            className="size-6"
           >
             <MinusIcon className="size-4" />
           </Button>
@@ -136,7 +136,7 @@ function CartLine({ id, merchandise, cost, quantity }: CartLineType) {
             }}
             variant={"ghost"}
             size={"icon"}
-            className="size-6 rounded-r-full"
+            className="size-6"
           >
             <PlusIcon className="size-4" />
           </Button>
