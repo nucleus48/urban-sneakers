@@ -14,13 +14,13 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { ProductDescription } from "@/components/product-description";
-import { ProductCard } from "@/components/product-card";
+import { ProductCard, ProductCardSkeleton } from "@/components/product-card";
 
 type Params = Promise<{ handle: string }>;
 
 export default function ProductPage({ params }: { params: Params }) {
   return (
-    <div>
+    <div className="container">
       <div className="md:flex space-y-8 gap-8 items-start mb-16 *:flex-1">
         <Suspense fallback={<ProductInfoSkeleton />}>
           <ProductInfo params={params} />
@@ -178,11 +178,7 @@ function ProductRecommendationsSkeleton() {
         <ScrollArea>
           <div className="flex w-max gap-4">
             {[...new Array(5)].map((_, index) => (
-              <div key={index} className="space-y-2">
-                <Skeleton className="w-[300px] h-[300px]" />
-                <Skeleton className="w-2/3 h-4 mx-auto" />
-                <Skeleton className="w-20 h-4 mx-auto" />
-              </div>
+              <ProductCardSkeleton key={index} />
             ))}
           </div>
           <ScrollBar orientation="horizontal" />

@@ -6,6 +6,7 @@ import {
 import { ApiClientRequestParams, ReturnData } from "@shopify/graphql-client";
 import { cache } from "react";
 import {
+  CollectionsQuery,
   ProductQuery,
   ProductRecommendationsQuery,
   ProductsQuery,
@@ -96,3 +97,10 @@ export const removeCartLines = async (cartId: string, lineIds: string[]) => {
   });
   return cartLinesRemove?.cart?.id;
 };
+
+export const getCollections = cache(async (first: number) => {
+  const { collections } = await storefrontFetch(CollectionsQuery, {
+    variables: { first },
+  });
+  return collections;
+});

@@ -2,6 +2,7 @@ import { currencyFormatter } from "@/lib/utils";
 import { ProductsQuery } from "@/types/storefront.generated";
 import Image from "next/image";
 import Link from "next/link";
+import { Skeleton } from "./ui/skeleton";
 
 export function ProductCard({
   title,
@@ -27,6 +28,16 @@ export function ProductCard({
           priceRange.minVariantPrice.currencyCode,
         )}
       </div>
+    </div>
+  );
+}
+
+export function ProductCardSkeleton() {
+  return (
+    <div className="space-y-2">
+      <Skeleton className="w-full aspect-square" />
+      <Skeleton className="w-1/2 h-4 mx-auto" />
+      <Skeleton className="w-20 h-4 mx-auto" />
     </div>
   );
 }
