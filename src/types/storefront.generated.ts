@@ -99,11 +99,22 @@ export type ProductRecommendationsQuery = { productRecommendations?: StorefrontT
     & { featuredImage?: StorefrontTypes.Maybe<Pick<StorefrontTypes.Image, 'url'>>, priceRange: { minVariantPrice: Pick<StorefrontTypes.MoneyV2, 'amount' | 'currencyCode'> } }
   )>> };
 
+export type CollectionsQueryVariables = StorefrontTypes.Exact<{
+  first?: StorefrontTypes.InputMaybe<StorefrontTypes.Scalars['Int']['input']>;
+}>;
+
+
+export type CollectionsQuery = { collections: { nodes: Array<(
+      Pick<StorefrontTypes.Collection, 'id' | 'title' | 'handle'>
+      & { image?: StorefrontTypes.Maybe<Pick<StorefrontTypes.Image, 'url'>> }
+    )> } };
+
 interface GeneratedQueryTypes {
   "#graphql\nquery Cart($cartId: ID!) {\n  cart(id: $cartId) {\n    id\n    checkoutUrl\n    lines(first: 10) {\n      nodes {\n        id\n        quantity\n        cost {\n          totalAmount {\n            amount\n            currencyCode\n          }\n        }\n        merchandise {\n          ... on ProductVariant {\n            ...ProductVariantFragment\n          }\n        }\n      }\n    }\n    cost {\n      totalAmount {\n        amount\n        currencyCode\n      }\n      subtotalAmount {\n        amount\n        currencyCode\n      }\n      totalTaxAmount {\n        amount\n        currencyCode\n      }\n    }\n    attributes {\n      key\n      value\n    }\n  }\n}\n#graphql\n  fragment ProductVariantFragment on ProductVariant {\n    id\n    title\n    availableForSale\n    quantityAvailable\n    image {\n      url\n      width\n      height\n    }\n    price {\n      amount\n      currencyCode\n    }\n    product {\n      title\n    }\n    selectedOptions {\n      name\n      value\n    }\n  }": {return: CartQuery, variables: CartQueryVariables},
   "#graphql\n  query Products($first: Int) {\n    products(first: $first) {\n      nodes {\n        ...ProductFragment\n      }\n    }\n  }\n  #graphql\n  fragment ProductFragment on Product {\n    id\n    title\n    handle\n    featuredImage {\n      url\n    }\n    priceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n  }": {return: ProductsQuery, variables: ProductsQueryVariables},
   "#graphql\n  query Product($handle: String) {\n    product(handle: $handle) {\n      ...ProductFragment\n      description\n      options {\n        name\n        values\n      }\n      images(first: 20) {\n        nodes {\n          id\n          url\n          width\n          height\n        }\n      }\n      variants(first: 250) {\n        nodes {\n          ...ProductVariantFragment\n        }\n      }\n    }\n  }\n  #graphql\n  fragment ProductVariantFragment on ProductVariant {\n    id\n    title\n    availableForSale\n    quantityAvailable\n    image {\n      url\n      width\n      height\n    }\n    price {\n      amount\n      currencyCode\n    }\n    product {\n      title\n    }\n    selectedOptions {\n      name\n      value\n    }\n  }\n  #graphql\n  fragment ProductFragment on Product {\n    id\n    title\n    handle\n    featuredImage {\n      url\n    }\n    priceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n  }": {return: ProductQuery, variables: ProductQueryVariables},
   "#graphql\n  query ProductRecommendations($productId: ID!) {\n    productRecommendations(productId: $productId) {\n      ...ProductFragment\n    }\n  }\n  #graphql\n  fragment ProductFragment on Product {\n    id\n    title\n    handle\n    featuredImage {\n      url\n    }\n    priceRange {\n      minVariantPrice {\n        amount\n        currencyCode\n      }\n    }\n  }": {return: ProductRecommendationsQuery, variables: ProductRecommendationsQueryVariables},
+  "#graphql\nquery Collections($first: Int) {\n  collections(first: $first) {\n    nodes {\n      id\n      title\n      handle\n      image {\n        url\n      }\n    }\n  }\n}": {return: CollectionsQuery, variables: CollectionsQueryVariables},
 }
 
 interface GeneratedMutationTypes {

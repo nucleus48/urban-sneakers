@@ -82,3 +82,17 @@ export const ProductRecommendationsQuery = `#graphql
     }
   }
   ${ProductFragment}`;
+
+export const CollectionsQuery = `#graphql
+query Collections($first: Int) {
+  collections(first: $first) {
+    nodes {
+      id
+      title
+      handle
+      image {
+        url
+      }
+    }
+  }
+}`
