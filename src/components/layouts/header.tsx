@@ -3,7 +3,7 @@ import { Button } from "../ui/button";
 import { Tooltip, TooltipContent } from "../ui/tooltip";
 import { TooltipTrigger } from "@radix-ui/react-tooltip";
 import { BRAND_NAME, COOKIE, ROUTE } from "@/lib/constants";
-import { Logo } from "../ui/logo";
+import { Logo } from "../ui/icons";
 import { SearchBar } from "../search-bar";
 import { CartSheet } from "../cart-sheet";
 import { NavSheet } from "../nav-sheet";

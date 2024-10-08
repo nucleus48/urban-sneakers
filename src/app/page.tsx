@@ -11,6 +11,7 @@ import { getCollections, getProducts } from "@/lib/shopify";
 import Link from "next/link";
 import { SEARCH_PARAM_KEY } from "@/lib/constants";
 import { ProductCard } from "@/components/product-card";
+import { CircleDollar, PlaneIcon, SecureIcon } from "@/components/ui/icons";
 
 export default function Home() {
   return (
@@ -19,6 +20,7 @@ export default function Home() {
       <CollectionsCarousel />
       <FeaturedProducts />
       <BannerSection />
+      <ServicesSection />
     </>
   );
 }
@@ -104,7 +106,7 @@ async function FeaturedProducts() {
 
 function BannerSection() {
   return (
-    <div className="grid *:row-start-1 *:col-start-1">
+    <div className="grid *:row-start-1 *:col-start-1 mb-16">
       <Image
         className="size-full object-cover object-left"
         src="/images/banner-2.jpg"
@@ -113,7 +115,9 @@ function BannerSection() {
         height={500}
       />
       <div className="container py-8 text-balance space-y-4">
-        <h2 className="font-bold text-3xl tracking-wide">PICK THE PERFECT PAIR</h2>
+        <h2 className="font-bold text-3xl tracking-wide">
+          PICK THE PERFECT PAIR
+        </h2>
         <p>
           Made from high-quality, breathable leather and mesh, ensuring your
           feet stay cool and comfortable all day long.
@@ -123,5 +127,39 @@ function BannerSection() {
         </Button>
       </div>
     </div>
+  );
+}
+
+function ServicesSection() {
+  const services = [
+    {
+      icon: PlaneIcon,
+      title: "Wordwide Shopping",
+      description: "Special financing and earn rewwards.",
+    },
+    {
+      icon: CircleDollar,
+      title: "30 Day Guarantee",
+      description: "30-days free return  policy.",
+    },
+    {
+      icon: SecureIcon,
+      title: "Secured Payments",
+      description: "We accept all majoi credit  cards.",
+    },
+  ];
+
+  return (
+    <section className="container flex flex-col gap-8">
+      {services.map((service) => (
+        <div key={service.title} className="bg-muted rounded-md flex items-center gap-4 md:gap-8 p-8">
+          <service.icon className="fill-black size-16 shrink-0" />
+          <div>
+            <h3 className="font-semibold text-xl">{service.title}</h3>
+            <p className="text-muted-foreground">{service.description}</p>
+          </div>
+        </div>
+      ))}
+    </section>
   );
 }
