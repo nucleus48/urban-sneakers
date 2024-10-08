@@ -18,6 +18,7 @@ export default function Home() {
       <HeroSection />
       <CollectionsCarousel />
       <FeaturedProducts />
+      <BannerSection />
     </>
   );
 }
@@ -86,7 +87,7 @@ async function FeaturedProducts() {
   const products = await getProducts(6);
 
   return (
-    <section className="container">
+    <section className="container mb-16">
       <div className="grid grid-cols-1 gap-4">
         {products.nodes.map((product) => (
           <ProductCard key={product.id} {...product} />
@@ -98,5 +99,29 @@ async function FeaturedProducts() {
         </Button>
       </div>
     </section>
+  );
+}
+
+function BannerSection() {
+  return (
+    <div className="grid *:row-start-1 *:col-start-1">
+      <Image
+        className="size-full object-cover object-left"
+        src="/images/banner-2.jpg"
+        alt="banner image"
+        width={500}
+        height={500}
+      />
+      <div className="container py-8 text-balance space-y-4">
+        <h2 className="font-bold text-3xl tracking-wide">PICK THE PERFECT PAIR</h2>
+        <p>
+          Made from high-quality, breathable leather and mesh, ensuring your
+          feet stay cool and comfortable all day long.
+        </p>
+        <Button variant={"outline"} className="rounded-full" asChild>
+          <Link href="/products">SHOP NOW</Link>
+        </Button>
+      </div>
+    </div>
   );
 }
