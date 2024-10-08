@@ -46,14 +46,14 @@ export function CartSheet({ cart }: { cart: CartQuery["cart"] }) {
           <p>Cart</p>
         </TooltipContent>
       </Tooltip>
-      <SheetContent className="w-full p-4">
+      <SheetContent className="w-full px-4 pb-4">
         <VisuallyHidden>
           <SheetTitle>Cart</SheetTitle>
         </VisuallyHidden>
         {!!optimisticCart?.lines.nodes.length ? (
           <div className="grid grid-rows-[1fr_auto] h-full">
-            <ScrollArea>
-              <div className="mt-4">
+            <ScrollArea className="pt-2">
+              <div className="mt-4 space-y-2">
                 {optimisticCart.lines.nodes.map((line) => (
                   <CartLine key={line.id} {...line} />
                 ))}
@@ -80,69 +80,69 @@ function CartLine({ id, merchandise, cost, quantity }: CartLineType) {
   } = useCart();
 
   return (
-    <div className="relative grid gap-2 items-end grid-cols-[auto_1fr_auto] p-4">
+    <div className="relative flex gap-2 items-center p-3">
       <Image
         src={merchandise.image?.url}
         alt={`${merchandise.title} preview`}
         width={80}
         height={80}
-        className="row-span-2 col-start-1 rounded-md brightness-95"
+        className="rounded-md brightness-95"
       />
-      <div className="col-start-2 row-start-1 font-semibold truncate text-sm">
-        {merchandise.product.title}
+      <div className="text-sm">
+        <div className="font-medium line-clamp-2">{merchandise.product.title}</div>
+        <div className="text-muted-foreground">{merchandise.title}</div>
       </div>
-      <div className="row-start-2 col-start-2 self-start">
-        {merchandise.title}
+      <div className="ml-auto">
+        <div className="text-primary text-sm mb-2">
+          {currencyFormatter(
+            cost.totalAmount.amount,
+            cost.totalAmount.currencyCode,
+          )}
+        </div>
+        <form className="flex items-center gap-1 bg-secondary rounded-full p-1">
+          <Button
+            formAction={() => {
+              removeOptimisticCartLine(merchandise.id);
+              removeCartLine(id);
+            }}
+            variant={"secondary"}
+            size={"icon"}
+            className="size-6 rounded-full absolute top-0 left-0"
+          >
+            <XIcon className="size-4" />
+          </Button>
+          <Button
+            formAction={() => {
+              decrementOptimisticCartLine(merchandise.id);
+              updateCartLine(id, quantity - 1);
+            }}
+            variant={"ghost"}
+            size={"icon"}
+            className="size-6 rounded-l-full"
+          >
+            <MinusIcon className="size-4" />
+          </Button>
+          <div>{quantity}</div>
+          <Button
+            formAction={() => {
+              if (merchandise.quantityAvailable === quantity) {
+                toast({
+                  description: `Product variant has only ${merchandise.quantityAvailable} pairs`,
+                });
+                return;
+              }
+              incrementOptimisticCartLine(merchandise.id);
+              updateCartLine(id, quantity + 1);
+            }}
+            variant={"ghost"}
+            size={"icon"}
+            className="size-6 rounded-r-full"
+          >
+            <PlusIcon className="size-4" />
+          </Button>
+          <div className="flex items-center"></div>
+        </form>
       </div>
-      <div className="col-start-3 row-start-1 text-primary">
-        {currencyFormatter(
-          cost.totalAmount.amount,
-          cost.totalAmount.currencyCode,
-        )}
-      </div>
-      <form className="row-start-2 col-start-3 flex items-center bg-muted/50 rounded-full self-start overflow-hidden">
-        <Button
-          formAction={() => {
-            removeOptimisticCartLine(merchandise.id);
-            removeCartLine(id);
-          }}
-          variant={"secondary"}
-          size={"icon"}
-          className="size-6 rounded-full absolute top-4 left-4 -translate-x-1/2 -translate-y-1/2"
-        >
-          <XIcon className="size-4" />
-        </Button>
-        <Button
-          formAction={() => {
-            decrementOptimisticCartLine(merchandise.id);
-            updateCartLine(id, quantity - 1);
-          }}
-          variant={"ghost"}
-          size={"icon"}
-          className="size-8"
-        >
-          <MinusIcon className="size-4" />
-        </Button>
-        <div className="font-medium">{quantity}</div>
-        <Button
-          formAction={() => {
-            if (merchandise.quantityAvailable === quantity) {
-              toast({
-                description: `Product variant has only ${merchandise.quantityAvailable} pairs`,
-              });
-              return;
-            }
-            incrementOptimisticCartLine(merchandise.id);
-            updateCartLine(id, quantity + 1);
-          }}
-          variant={"ghost"}
-          size={"icon"}
-          className="size-8"
-        >
-          <PlusIcon className="size-4" />
-        </Button>
-        <div className="flex items-center"></div>
-      </form>
     </div>
   );
 }
@@ -150,7 +150,7 @@ function CartLine({ id, merchandise, cost, quantity }: CartLineType) {
 function CartSummary() {
   const { optimisticCart } = useCart();
   return (
-    <section className="p-4">
+    <section className="p-3">
       <article className="*:flex *:justify-between *:py-1 divide-y divide-y-border mb-2">
         <div>
           <div>Estimated tax</div>

@@ -21,7 +21,7 @@ type Params = Promise<{ handle: string }>;
 export default function ProductPage({ params }: { params: Params }) {
   return (
     <div>
-      <div className="md:flex space-y-8 gap-8 items-start mb-8 *:flex-1">
+      <div className="md:flex space-y-8 gap-8 items-start mb-16 *:flex-1">
         <Suspense fallback={<ProductInfoSkeleton />}>
           <ProductInfo params={params} />
         </Suspense>
@@ -43,7 +43,7 @@ async function ProductInfo({ params }: { params: Params }) {
 
   return (
     <>
-      <Carousel orientation="horizontal" className="md:max-w-md mx-auto">
+      <Carousel orientation="horizontal" className="md:max-w-xl mx-auto">
         <CarouselMainContainer>
           {product.images.nodes.map((image) => (
             <SliderMainItem key={image.id}>
@@ -73,21 +73,21 @@ async function ProductInfo({ params }: { params: Params }) {
           ))}
         </CarouselThumbsContainer>
       </Carousel>
-      <section className="space-y-4 md:max-w-md">
-        <div className="space-y-2">
-          <h1 className="font-semibold text-2xl">{product.title}</h1>
+      <section className="space-y-8 md:max-w-md">
+        <div>
+          <h1 className="font-semibold text-2xl mb-4">{product.title}</h1>
           <div className="text-xl text-primary">
             {currencyFormatter(
               product.priceRange.minVariantPrice.amount,
               product.priceRange.minVariantPrice.currencyCode,
             )}
           </div>
-          <ProductDescription
-            options={product.options}
-            description={product.description}
-            variants={product.variants}
-          />
         </div>
+        <ProductDescription
+          options={product.options}
+          description={product.description}
+          variants={product.variants}
+        />
       </section>
     </>
   );
@@ -96,7 +96,7 @@ async function ProductInfo({ params }: { params: Params }) {
 function ProductInfoSkeleton() {
   return (
     <>
-      <div className="space-y-4 md:max-w-md mx-auto">
+      <div className="space-y-4 md:max-w-lg mx-auto">
         <Skeleton className="w-full aspect-[1.2]" />
         <div className="flex gap-2 *:basis-1/3">
           <Skeleton className="aspect-square" />
@@ -104,13 +104,13 @@ function ProductInfoSkeleton() {
           <Skeleton className="aspect-square" />
         </div>
       </div>
-      <div className="space-y-4 md:max-w-md">
-        <div className="space-y-2">
+      <div className="space-y-8 md:max-w-md">
+        <div className="space-y-4">
           <Skeleton className="w-full h-5" />
           <Skeleton className="w-1/3 h-5" />
           <Skeleton className="w-20 h-5" />
         </div>
-        <div className="space-y-2">
+        <div className="space-y-4">
           <Skeleton className="w-16 h-4" />
           <div className="flex gap-4">
             <Skeleton className="size-8 rounded-full" />
@@ -120,7 +120,7 @@ function ProductInfoSkeleton() {
             <Skeleton className="size-8 rounded-full" />
           </div>
         </div>
-        <div className="space-y-2">
+        <div className="space-y-4">
           <Skeleton className="w-20 h-4" />
           <div className="flex gap-4">
             <Skeleton className="h-8 w-20 rounded-full" />
@@ -157,7 +157,7 @@ async function ProductRecommendations({ params }: { params: Params }) {
 
   return (
     <section>
-      <h2 className="font-semibold text-xl mb-4">Recommendations</h2>
+      <h2 className="font-semibold text-xl mb-8">Recommendations</h2>
       <ScrollArea>
         <div className="flex w-max gap-4 *:w-[300px]">
           {productRecommendations.map((product) => (

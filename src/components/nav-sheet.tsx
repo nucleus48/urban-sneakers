@@ -41,8 +41,8 @@ export function NavSheet({ className }: { className?: string }) {
           <SheetTitle>Navigation Menu</SheetTitle>
         </VisuallyHidden>
         <SearchBar />
-        <nav className="mt-4">
-          <ul className="space-y-2">
+        <nav className="mt-8">
+          <ul className="space-y-4">
             {NAV_LINKS.map((navLink) => (
               <li key={navLink.href}>
                 <Button
