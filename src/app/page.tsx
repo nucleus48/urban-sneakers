@@ -10,15 +10,29 @@ import {
 import { getCollections, getProducts } from "@/lib/shopify";
 import Link from "next/link";
 import { SEARCH_PARAM_KEY } from "@/lib/constants";
-import { ProductCard } from "@/components/product-card";
+import { ProductCard, ProductCardSkeleton } from "@/components/product-card";
 import { CircleDollar, PlaneIcon, SecureIcon } from "@/components/ui/icons";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Home() {
   return (
     <>
       <HeroSection />
-      <CollectionsCarousel />
-      <FeaturedProducts />
+      <section className="container overflow-x-hidden mb-16">
+        <Suspense
+          fallback={
+            <Skeleton className="aspect-square w-full container max-h-[300px]" />
+          }
+        >
+          <CollectionsCarousel />
+        </Suspense>
+      </section>
+      <section className="container mb-16">
+        <Suspense fallback={<FeaturedProductsSkeleton />}>
+          <FeaturedProducts />
+        </Suspense>
+      </section>
       <BannerSection />
       <ServicesSection />
       <hr />
@@ -53,7 +67,7 @@ async function CollectionsCarousel() {
   const collections = await getCollections(5);
 
   return (
-    <section className="container overflow-x-hidden mb-16">
+    <>
       <Carousel>
         <CarouselMainContainer className="gap-4 rounded-md">
           {collections.nodes.map((collection, index) => (
@@ -82,7 +96,7 @@ async function CollectionsCarousel() {
           ))}
         </CarouselThumbsContainer>
       </Carousel>
-    </section>
+    </>
   );
 }
 
@@ -90,7 +104,7 @@ async function FeaturedProducts() {
   const products = await getProducts(6);
 
   return (
-    <section className="container mb-16">
+    <>
       <div className="grid grid-cols-1 gap-4">
         {products.nodes.map((product) => (
           <ProductCard key={product.id} {...product} />
@@ -101,7 +115,24 @@ async function FeaturedProducts() {
           <Link href="/products">ALL PRODUCTS</Link>
         </Button>
       </div>
-    </section>
+    </>
+  );
+}
+
+async function FeaturedProductsSkeleton() {
+  return (
+    <>
+      <div className="grid grid-cols-1 gap-4">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <ProductCardSkeleton key={index} />
+        ))}
+      </div>
+      <div className="text-center mt-4">
+        <Button variant={"outline"} className="rounded-full" asChild>
+          <Link href="/products">ALL PRODUCTS</Link>
+        </Button>
+      </div>
+    </>
   );
 }
 
@@ -153,7 +184,10 @@ function ServicesSection() {
   return (
     <section className="container flex flex-col gap-8">
       {services.map((service) => (
-        <div key={service.title} className="bg-muted rounded-md flex items-center gap-4 md:gap-8 p-8">
+        <div
+          key={service.title}
+          className="bg-muted rounded-md flex items-center gap-4 md:gap-8 p-8"
+        >
           <service.icon className="fill-black size-16 shrink-0" />
           <div>
             <h3 className="font-semibold text-xl">{service.title}</h3>

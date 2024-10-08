@@ -1,4 +1,4 @@
-import { ProductCard } from "@/components/product-card";
+import { ProductCard, ProductCardSkeleton } from "@/components/product-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PRODUCTS_PAGE_LENGTH } from "@/lib/constants";
 import { getProducts } from "@/lib/shopify";
@@ -31,10 +31,6 @@ async function ProductList() {
 
 function ProductListSkeleton() {
   return [...new Array(PRODUCTS_PAGE_LENGTH)].map((_, index) => (
-    <div key={index} className="space-y-2">
-      <Skeleton className="w-full aspect-square" />
-      <Skeleton className="w-1/2 h-4 mx-auto" />
-      <Skeleton className="w-20 h-4 mx-auto" />
-    </div>
+    <ProductCardSkeleton key={index} />
   ));
 }
