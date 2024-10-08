@@ -69,9 +69,10 @@ export function ProductDescription({
 
   return (
     <form
-      className="space-y-4"
+      className="space-y-8"
       action={async () => {
         if (!selectedVariant) return;
+
         addOptimisticCartLine({
           id: crypto.randomUUID(),
           quantity: 1,
@@ -80,11 +81,12 @@ export function ProductDescription({
             totalAmount: selectedVariant.price,
           },
         });
+        
         await addItemToCart(selectedVariant.id);
       }}
     >
       {options.map(({ name, values }) => (
-        <div key={name} className="space-y-2">
+        <div key={name} className="space-y-4">
           <div className="font-medium uppercase">{name}</div>
           <div className="flex gap-4 flex-wrap">
             {values.map((value) => {

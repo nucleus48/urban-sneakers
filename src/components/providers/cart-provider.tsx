@@ -196,10 +196,12 @@ function updateCartCost<TCart extends NonNullable<CartQuery["cart"]>>(
 
 function addOrUpdateCartLine(lines: CartLine[], line: CartLine): CartLine[] {
   const lineExist = lines.some(
-    (line) => line.merchandise.id == line.merchandise.id,
+    (value) => value.merchandise.id == line.merchandise.id,
   );
 
-  if (!lineExist) return [...lines, line];
+  if (!lineExist) {
+    return [...lines, line]
+  }
 
   return lines.map((value) =>
     value.merchandise.id == line.merchandise.id

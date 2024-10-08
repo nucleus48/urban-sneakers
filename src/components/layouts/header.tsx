@@ -20,9 +20,8 @@ export function Header() {
   ];
 
   return (
-    <header className="bg-wh">
+    <header>
       <div className="container flex items-center gap-2 lg:gap-4 py-4 [&_svg]:size-5">
-        <NavSheet className="mr-auto md:hidden" />
         <div className="flex size-10 border rounded-md items-center justify-center">
           <Logo />
         </div>
@@ -58,6 +57,7 @@ export function Header() {
         <Suspense fallback={<CartSkeleton />}>
           <Cart />
         </Suspense>
+        <NavSheet className="md:hidden" />
       </div>
     </header>
   );
