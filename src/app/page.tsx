@@ -7,24 +7,24 @@ import {
   CarouselThumbsContainer,
   SliderMainItem,
 } from "@/components/ui/carousel";
-import { getCollections } from "@/lib/shopify";
+import { getCollections, getProducts } from "@/lib/shopify";
 import Link from "next/link";
 import { SEARCH_PARAM_KEY } from "@/lib/constants";
+import { ProductCard } from "@/components/product-card";
 
 export default function Home() {
   return (
-    <div className="space-y-8">
+    <>
       <HeroSection />
-      <section className="container overflow-x-hidden">
-        <CollectionsCarousel />
-      </section>
-    </div>
+      <CollectionsCarousel />
+      <FeaturedProducts />
+    </>
   );
 }
 
 function HeroSection() {
   return (
-    <div className="grid *:row-start-1 *:col-start-1 place-items-center">
+    <div className="grid *:row-start-1 *:col-start-1 place-items-center mb-8">
       <Image
         className="w-full"
         src="/images/hero-1.webp"
@@ -46,36 +46,57 @@ function HeroSection() {
 }
 
 async function CollectionsCarousel() {
-  const collections = await getCollections(10);
+  const collections = await getCollections(5);
 
   return (
-    <Carousel>
-      <CarouselMainContainer className="gap-4 rounded-md">
-        {collections.nodes.map((collection, index) => (
-          <SliderMainItem key={index} className="brightness-95 p-4">
-            <Link
-              className="contents"
-              href={{
-                pathname: "/products",
-                query: { [SEARCH_PARAM_KEY.COLLECTION]: collection.handle },
-              }}
-            >
-              <Image
-                className="size-full object-contain rounded-md"
-                src={collection.image?.url}
-                alt={`${collection.title} preview`}
-                width={300}
-                height={300}
-              />
-            </Link>
-          </SliderMainItem>
+    <section className="container overflow-x-hidden mb-16">
+      <Carousel>
+        <CarouselMainContainer className="gap-4 rounded-md">
+          {collections.nodes.map((collection, index) => (
+            <SliderMainItem key={index} className="brightness-95 p-4">
+              <Link
+                className="contents"
+                href={{
+                  pathname: "/products",
+                  query: { [SEARCH_PARAM_KEY.COLLECTION]: collection.handle },
+                }}
+              >
+                <Image
+                  className="size-full object-contain rounded-md"
+                  src={collection.image?.url}
+                  alt={`${collection.title} preview`}
+                  width={300}
+                  height={300}
+                />
+              </Link>
+            </SliderMainItem>
+          ))}
+        </CarouselMainContainer>
+        <CarouselThumbsContainer className="gap-x-2 justify-center mt-4">
+          {collections.nodes.map((_, index) => (
+            <CarouselIndicator key={index} index={index} className="size-2" />
+          ))}
+        </CarouselThumbsContainer>
+      </Carousel>
+    </section>
+  );
+}
+
+async function FeaturedProducts() {
+  const products = await getProducts(6);
+
+  return (
+    <section className="container">
+      <div className="grid grid-cols-1 gap-4">
+        {products.nodes.map((product) => (
+          <ProductCard key={product.id} {...product} />
         ))}
-      </CarouselMainContainer>
-      <CarouselThumbsContainer className="gap-x-2 justify-center mt-4">
-        {collections.nodes.map((_, index) => (
-          <CarouselIndicator key={index} index={index} className="size-2" />
-        ))}
-      </CarouselThumbsContainer>
-    </Carousel>
+      </div>
+      <div className="text-center mt-4">
+        <Button variant={"outline"} className="rounded-full" asChild>
+          <Link href="/products">ALL PRODUCTS</Link>
+        </Button>
+      </div>
+    </section>
   );
 }
