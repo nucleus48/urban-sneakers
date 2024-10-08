@@ -7,6 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { CartProvider } from "@/components/providers/cart-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { StorePassword } from "@/components/store-password";
+import { Footer } from "@/components/layouts/footer";
 
 const openSans = localFont({
   src: "./fonts/OpenSans.ttf",
@@ -32,6 +33,7 @@ export default function RootLayout({
           <CartProvider>
             <Header />
             <main className="py-4">{children}</main>
+            <Footer />
             <Toaster />
             <StorePassword />
           </CartProvider>

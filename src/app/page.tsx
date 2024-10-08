@@ -21,6 +21,7 @@ export default function Home() {
       <FeaturedProducts />
       <BannerSection />
       <ServicesSection />
+      <hr />
     </>
   );
 }
@@ -135,7 +136,7 @@ function ServicesSection() {
     {
       icon: PlaneIcon,
       title: "Wordwide Shopping",
-      description: "Special financing and earn rewwards.",
+      description: "Special financing and earn rewards.",
     },
     {
       icon: CircleDollar,
@@ -145,7 +146,7 @@ function ServicesSection() {
     {
       icon: SecureIcon,
       title: "Secured Payments",
-      description: "We accept all majoi credit  cards.",
+      description: "We accept all major credit  cards.",
     },
   ];
 
