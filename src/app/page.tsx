@@ -9,11 +9,13 @@ import {
 } from "@/components/ui/carousel";
 import { getCollections, getProducts } from "@/lib/shopify";
 import Link from "next/link";
-import { SEARCH_PARAM_KEY } from "@/lib/constants";
+import { BRAND_NAME, SEARCH_PARAM_KEY } from "@/lib/constants";
 import { ProductCard, ProductCardSkeleton } from "@/components/product-card";
-import { CircleDollar, PlaneIcon, SecureIcon } from "@/components/ui/icons";
+import { CircleDollar, Logo, PlaneIcon, SecureIcon } from "@/components/ui/icons";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
+import { MailIcon } from "lucide-react";
 
 export default function Home() {
   return (
@@ -35,7 +37,7 @@ export default function Home() {
       </section>
       <BannerSection />
       <ServicesSection />
-      <hr />
+      <NewsLetterSection />
     </>
   );
 }
@@ -182,7 +184,7 @@ function ServicesSection() {
   ];
 
   return (
-    <section className="container flex flex-col gap-8">
+    <section className="container flex flex-col gap-8 mb-16">
       {services.map((service) => (
         <div
           key={service.title}
@@ -195,6 +197,35 @@ function ServicesSection() {
           </div>
         </div>
       ))}
+    </section>
+  );
+}
+
+function NewsLetterSection() {
+  return (
+    <section className="container space-y-8">
+      <hr className="mb-8" />
+      <div className="text-center max-w-sm mx-auto space-y-4">
+        <div className="flex items-center gap-2 justify-center">
+          <div className="flex size-10 border rounded-md items-center justify-center">
+            <Logo />
+          </div>
+          <div className="font-semibold text-lg">
+            {BRAND_NAME}
+          </div>
+        </div>
+        <p className="text-muted-foreground">
+          Be the first to know about new releases, exclusive deals, and sneaker
+          trends!
+        </p>
+        <form className="flex gap-2">
+          <Input placeholder="Enter your email" />
+          <Button className="gap-2">
+            <MailIcon className="size-4" />
+            <span>Subscribe</span>
+          </Button>
+        </form>
+      </div>
     </section>
   );
 }
